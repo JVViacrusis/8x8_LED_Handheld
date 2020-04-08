@@ -97,7 +97,7 @@ void Game_SimonSays_Init(Screen_Alt &Screen)
 
   simon_millis_blinkNextInSqncePrev = millis();
 
-  Serial.println(simon_RqrdSqnce);
+//   Serial.println(simon_RqrdSqnce);
 }
 
 
@@ -302,11 +302,11 @@ void simon_CompareSequeneces()
         boolean sqnceIsCorrect = true;
         for(int i = 0; i < simon_PlyrSqnce.length(); i++)
         {
-          Serial.println(simon_PlyrSqnce.length());
-          Serial.print("Player: ");
-          Serial.println(simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - i));
-          Serial.print("Required: ");
-          Serial.println(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - i));
+        //   Serial.println(simon_PlyrSqnce.length());
+        //   Serial.print("Player: ");
+        //   Serial.println(simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - i));
+        //   Serial.print("Required: ");
+        //   Serial.println(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - i));
             //if the player's sequence does not match the required sequence, 
             if(simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - i) 
                 != 
@@ -323,10 +323,10 @@ void simon_CompareSequeneces()
             simon_RqrdSqnce += simon_SqnceAddition;
 
             simon_ShowingSequence = true;
-            Serial.println("CORRECT!");
+            // Serial.println("CORRECT!");
         }else if(!sqnceIsCorrect)
         {
-            Serial.println("WRONG YOU LOSE");
+            // Serial.println("WRONG YOU LOSE");
         }
 }
 

@@ -40,7 +40,7 @@ bool firstClick[6] = {1, 1, 1, 1, 1, 1};
 
 void setup()
 {
-  Serial.begin(9600);
+    Serial.begin(300);
 }
 
 void loop()

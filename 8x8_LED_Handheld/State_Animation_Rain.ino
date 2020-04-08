@@ -19,15 +19,15 @@
                 void DrawOnScreen(Screen_Alt Screen);
 
             private:
-                int cur_x;
-                int cur_y;
+                signed int cur_x;
+                signed int cur_y;
 
-                int prev_x;
-                int prev_y;
+                signed int prev_x;
+                signed int prev_y;
 
                 //  draw_Points[point #][point_x, point_y]
                 //  relative to home position (x, y)
-                int draw_Points[1][2];
+                signed int draw_Points[1][2];
 
 
         };
@@ -35,7 +35,7 @@
 
         Raindrop::Raindrop(){}
 
-        void Raindrop::Init(int init_x, int init_y)
+        void Raindrop::Init(signed int init_x, signed int init_y)
         {
             cur_x = init_x;
             cur_y = init_y;
@@ -54,21 +54,44 @@
 
             cur_y += 1;
 
-            // if(cur_y > 7)
-            // {
-            //     cur_y = 0;
-            // }
+            if(cur_y == 8)
+            {
+                cur_y = 0;
+            }
+            Serial.println(cur_y);
         }
 
         
         void Raindrop::DrawOnScreen(Screen_Alt Screen)
         {
+            //erase the previous location of each pixel if it's within the screen
+            for (int i = 0; i < sizeof(draw_Points) / sizeof(draw_Points[0]); i++)
+            {
+                //If within the bounds of the screen, erase.
+                if(draw_Points[i][0] >= 0 && draw_Points[i][0] <= 7 && draw_Points[i][1] >= 0 && draw_Points[i][1] <= 7)    
+                {
+                    Screen.EditPixel(prev_x + draw_Points[i][0], prev_y + draw_Points[i][1], 0);
+                }
+            }
+
+            //draw the current/new location of each pixel if it's within the screen
+            for(int i = 0; i < sizeof(draw_Points) / sizeof(draw_Points[0]); i++)
+            {
+                //If within the bounds of the screen, draw.
+                if(draw_Points[i][0] >= 0 && draw_Points[i][0] <= 7 && draw_Points[i][1] >= 0 && draw_Points[i][1] <= 7)
+                {
+                    Screen.EditPixel(cur_x + draw_Points[i][0], cur_y + draw_Points[i][1], 1);
+                }    
+            }
+
+
+            
 
             //erase the previous location's rendering
-            Screen.EditPixel(prev_x + draw_Points[0][0], prev_y + draw_Points[0][1], 0);
+            
 
             //draw the new location's rendering
-            Screen.EditPixel(cur_x + draw_Points[0][0], cur_y + draw_Points[0][1], 1);
+            
         }
 
 
@@ -91,7 +114,7 @@ Raindrop raindrops[1];
 
 
 long long int miliTim_Fall_Prev;
-long long int miliTim_Fall_Interval = 500;
+long long int miliTim_Fall_Interval = 200;
 
 
 
@@ -117,7 +140,6 @@ void Animation_Rain_Periodic(Screen_Alt &Screen, bool in[6])
     if((millis() - miliTim_Fall_Prev) > miliTim_Fall_Interval)
     {
         miliTim_Fall_Prev = millis();
-
         for (int i=0; i<sizeof raindrops/sizeof raindrops[0]; i++)
         {
             raindrops[i].Fall();

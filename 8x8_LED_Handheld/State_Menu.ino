@@ -55,15 +55,15 @@ void Menu_Periodic(Screen_Alt &Screen, bool in[6])
 
     
 
-    if(in[5] && firstClick[5])  //if click B first time, selection confirmed.
+    if(in[4] && firstClick[4])  //if click B first time, selection confirmed.
     {
-        firstClick[5] = false;
+        firstClick[4] = false;
 
         SelectionConfirmed = true;
     }
-    else if(!in[5] && !firstClick[5])  //first click reset
+    else if(!in[4] && !firstClick[4])  //first click reset
     {
-        firstClick[5] = true;
+        firstClick[4] = true;
     }
 
 
@@ -124,7 +124,7 @@ enum State Menu_SwitchCheck(Screen_Alt &Screen, bool in[6])
 {
     State ReturnState = MENU;   //default repeat current state unless told changed to different state
 
-    if(SelectionConfirmed && in[5])
+    if(SelectionConfirmed)
     {
         ReturnState = (State)SelectionCurrent;
     }
