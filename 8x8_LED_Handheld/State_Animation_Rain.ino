@@ -115,12 +115,12 @@ void Animation_Rain_Periodic(Screen_Alt &Screen, bool in[6])
 
         for (int i=0; i<sizeof raindrops/sizeof raindrops[0]; i++)
         {
-            raindrops[i].Fall;
+            raindrops[i].Fall();
         }    
     }
 
-    Screen_Alt raindrops_Screen
-    for (int i=0; i<sizeof raindrops/sizeof raindrops[0]; i++)
+    Screen_Alt raindrops_Screen;
+    for(int i=0; i<sizeof raindrops/sizeof raindrops[0]; i++)
     {
         raindrops[i].DrawOnScreen(raindrops_Screen);
     }  
@@ -140,5 +140,3 @@ enum State Animation_Rain_SwitchCheck(Screen_Alt &Screen, bool in[6])
 
     return ReturnState;
 }
-
-
