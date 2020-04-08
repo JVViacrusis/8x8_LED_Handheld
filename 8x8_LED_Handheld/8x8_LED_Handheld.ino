@@ -15,7 +15,8 @@ enum State
     MENU,
     GAME_DODGE,
     GAME_DOODLEJUMP,
-    GAME_SIMONSAYS
+    GAME_SIMONSAYS,
+    ANIMATION_RAIN
 };
 
 Screen_Alt m_Screen;
@@ -115,7 +116,7 @@ void loop()
         break;
 
 
-      case GAME_SIMONSAYS:
+        case GAME_SIMONSAYS:
           if(First_Cycle)
             {
                 First_Cycle = false;
@@ -136,6 +137,29 @@ void loop()
                 First_Cycle = true;
             }
         break;
+
+        case ANIMATION_RAIN:
+          if(First_Cycle)
+            {
+                First_Cycle = false;
+                Animation_Rain_Init(m_Screen);
+            }
+                
+            if(!First_Cycle)
+            {
+                m_IOControl.GetButtonStates(input);
+                Animation_Rain_Periodic(m_Screen, input);
+            }
+
+            m_IOControl.GetButtonStates(input);
+            Current_State = Animation_Rain_SwitchCheck(m_Screen, input);
+            if(Current_State != Previous_State) //State has changed
+            {
+                Previous_State = Current_State;
+                First_Cycle = true;
+            }
+        break;
+
 
 
     }

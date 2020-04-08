@@ -3,7 +3,7 @@
 
 
 int Game_Selection_MinNum = 1;
-int Game_Selection_MaxNum = 3;
+int Game_Selection_MaxNum = 4;
 
 int SelectionCurrent = Game_Selection_MinNum;
 bool SelectionConfirmed;
@@ -83,25 +83,36 @@ void Menu_Periodic(Screen_Alt &Screen, bool in[6])
     }
     else if(SelectionCurrent == 2)  // DoodleJump
     {
-         displayImage[0] = B00000011;
-         displayImage[1] = B00000000;
-         displayImage[2] = B01100000;
-         displayImage[3] = B00000000;
-         displayImage[4] = B00100110;
-         displayImage[5] = B00100000;
-         displayImage[6] = B11111111;
-         displayImage[7] = B01000000;
+        displayImage[0] = B00000011;
+        displayImage[1] = B00000000;
+        displayImage[2] = B01100000;
+        displayImage[3] = B00000000;
+        displayImage[4] = B00100110;
+        displayImage[5] = B00100000;
+        displayImage[6] = B11111111;
+        displayImage[7] = B01000000;
     }
     else if(SelectionCurrent == 3)  // Simon Says
     {
-         displayImage[0] = B00011000;
-         displayImage[1] = B00111100;
-         displayImage[2] = B01100110;
-         displayImage[3] = B01100110;
-         displayImage[4] = B00111100;
-         displayImage[5] = B00011000;
-         displayImage[6] = B11111111;
-         displayImage[7] = B00100000;
+        displayImage[0] = B00011000;
+        displayImage[1] = B00111100;
+        displayImage[2] = B01100110;
+        displayImage[3] = B01100110;
+        displayImage[4] = B00111100;
+        displayImage[5] = B00011000;
+        displayImage[6] = B11111111;
+        displayImage[7] = B00100000;
+    }
+    else if(SelectionCurrent == 4) // Rain
+    {
+        displayImage[0] = B01000100;
+        displayImage[1] = B10001001;
+        displayImage[2] = B00100001;
+        displayImage[3] = B00100000;
+        displayImage[4] = B10001000;
+        displayImage[5] = B00010001;
+        displayImage[6] = B11111111;
+        displayImage[7] = B00010000;
     }
     
     Screen.EditFullScreen(displayImage);  
