@@ -15,7 +15,7 @@ void Menu_Init(Screen_Alt &Screen)
         firstClick[i] = 1;
     }
 
-    SelectionCurrent = Game_Selection_MinNum; // -1 because when exiting the game, you are holding the right button which causes the menu to go one to the right
+    SelectionCurrent = Game_Selection_MinNum -1; // -1 because when exiting the game, you are holding the right button which causes the menu to go one to the right
     SelectionConfirmed = false;
 }
 

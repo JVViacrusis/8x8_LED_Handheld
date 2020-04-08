@@ -139,12 +139,12 @@ void loop()
         break;
 
         case ANIMATION_RAIN:
-          if(First_Cycle)
+            if(First_Cycle)
             {
                 First_Cycle = false;
                 Animation_Rain_Init(m_Screen);
             }
-                
+            
             if(!First_Cycle)
             {
                 m_IOControl.GetButtonStates(input);
