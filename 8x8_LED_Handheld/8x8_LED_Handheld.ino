@@ -68,7 +68,7 @@ void loop()
             {
                 Previous_State = Current_State;
                 First_Cycle = true;
-                m_IOControl.GetButtonStates(input);
+                delay(1000);
             }
         break;
 
@@ -91,7 +91,7 @@ void loop()
             {
                 Previous_State = Current_State;
                 First_Cycle = true;
-                m_IOControl.GetButtonStates(input);
+                delay(1000);
             }
         break;
 
@@ -114,7 +114,7 @@ void loop()
             {
                 Previous_State = Current_State;
                 First_Cycle = true;
-                m_IOControl.GetButtonStates(input);
+                delay(1000);
             }
         break;
 
@@ -138,7 +138,7 @@ void loop()
             {
                 Previous_State = Current_State;
                 First_Cycle = true;
-                m_IOControl.GetButtonStates(input);
+                delay(1000);
             }
         break;
 
@@ -161,7 +161,7 @@ void loop()
             {
                 Previous_State = Current_State;
                 First_Cycle = true;
-                m_IOControl.GetButtonStates(input);
+                delay(1000);
             }
         break;
 
