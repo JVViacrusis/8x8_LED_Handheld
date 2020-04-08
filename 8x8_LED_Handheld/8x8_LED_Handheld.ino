@@ -116,8 +116,8 @@ void loop()
         break;
 
 
-        case GAME_SIMONSAYS:
-          if(First_Cycle)
+        case GAME_SIMONSAYS
+            if(First_Cycle)
             {
                 First_Cycle = false;
                 Game_SimonSays_Init(m_Screen);
