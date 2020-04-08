@@ -1,0 +1,1 @@
+This was a self-lead school project meant to explore the utility of shift registers when paired with Arduino. This was also an homage to my very first electronics project of a similar, but much more rudimentary design that was made 1.5 years prior 
