@@ -94,7 +94,7 @@ void Menu_Periodic(Screen_Alt &Screen, bool in[6])
     }
     else if(SelectionCurrent == 3)  // Simon Says
     {
-         displayImage[0] = B11111111;
+         displayImage[0] = B00011000;
          displayImage[1] = B00111100;
          displayImage[2] = B01100110;
          displayImage[3] = B01100110;
