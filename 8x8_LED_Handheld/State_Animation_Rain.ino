@@ -53,6 +53,11 @@
             prev_y = cur_y;
 
             cur_y += 1;
+
+            // if(cur_y > 7)
+            // {
+            //     cur_y = 0;
+            // }
         }
 
         
