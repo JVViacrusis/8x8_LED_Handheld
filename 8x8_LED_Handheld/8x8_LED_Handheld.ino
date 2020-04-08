@@ -68,6 +68,7 @@ void loop()
             {
                 Previous_State = Current_State;
                 First_Cycle = true;
+                delay(1000);
             }
         break;
 
@@ -90,6 +91,7 @@ void loop()
             {
                 Previous_State = Current_State;
                 First_Cycle = true;
+                delay(1000);
             }
         break;
 
@@ -112,6 +114,7 @@ void loop()
             {
                 Previous_State = Current_State;
                 First_Cycle = true;
+                delay(1000);
             }
         break;
 
@@ -135,6 +138,7 @@ void loop()
             {
                 Previous_State = Current_State;
                 First_Cycle = true;
+                delay(1000);
             }
         break;
 
@@ -157,6 +161,7 @@ void loop()
             {
                 Previous_State = Current_State;
                 First_Cycle = true;
+                delay(1000);
             }
         break;
 
