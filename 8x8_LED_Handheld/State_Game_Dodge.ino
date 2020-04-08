@@ -201,6 +201,7 @@ enum State Game_Dodge_SwitchCheck(Screen_Alt &Screen, bool in[6])
     {
         ReturnState = MENU;
     }
-
+    Serial.print("DODGE SWITCH CHECK: ");
+    Serial.println(ReturnState);
     return ReturnState;
 }

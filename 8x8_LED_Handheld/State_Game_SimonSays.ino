@@ -291,7 +291,8 @@ enum State Game_SimonSays_SwitchCheck(Screen_Alt &Screen, bool in[6])
   {
     ReturnState = MENU;
   }
-
+    Serial.print("SIMON SAYS SWITCH CHECK: ");
+    Serial.println(ReturnState);
   return ReturnState;
 }
 

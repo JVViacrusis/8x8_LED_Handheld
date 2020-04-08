@@ -128,6 +128,7 @@ enum State Menu_SwitchCheck(Screen_Alt &Screen, bool in[6])
     {
         ReturnState = (State)SelectionCurrent;
     }
-
+    Serial.print("MENU SWITCH CHECK: ");
+    Serial.println(ReturnState);
     return ReturnState;
 }
