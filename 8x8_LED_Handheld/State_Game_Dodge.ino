@@ -50,7 +50,7 @@
 
                         draw_Points[1][0] = 1;
                         draw_Points[1][1] = 0;
-                    }9, kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk 
+                    }
 
                     void Enemy::Move(int x_Move, int y_Move)
                     {
@@ -204,4 +204,3 @@ enum State Game_Dodge_SwitchCheck(Screen_Alt &Screen, bool in[6])
 
     return ReturnState;
 }
-GG
