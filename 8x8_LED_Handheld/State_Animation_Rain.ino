@@ -16,7 +16,7 @@
 
                 void Fall();
 
-                void DrawOnScreen();
+                void DrawOnScreen(Screen_Alt Screen);
 
             private:
                 int cur_x;
