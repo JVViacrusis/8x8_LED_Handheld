@@ -4,6 +4,7 @@
 
 
 
+
 void Game_DoodleJump_Init(Screen_Alt &Screen)
 {
     for(int i = 0; i < 6; i++)
