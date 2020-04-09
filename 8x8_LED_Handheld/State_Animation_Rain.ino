@@ -2,6 +2,18 @@
 #include "Screen_Alt.h"
 
 
+class fix_rain
+{
+    public:
+        fix_rain();
+        void DrawOnScreen(Screen_Alt Screen);
+};
+fix_rain::fix_rain(){}
+void fix_rain::DrawOnScreen(Screen_Alt Screen){}
+fix_rain fix_rain_;
+
+
+
 ////////////////////////////////////////////
 //            RAINDROP CLASS              //
 //                 START                  //
@@ -16,7 +28,7 @@
 
                 void Fall();
 
-                void DrawOnScreen(Screen_Alt Screen);
+                void DrawOnScreen(Screen_Alt &Screen);
 
             private:
                 signed int cur_x;
@@ -58,11 +70,10 @@
             {
                 cur_y = 0;
             }
-            Serial.println(cur_y);
         }
 
         
-        void Raindrop::DrawOnScreen(Screen_Alt Screen)
+        void Raindrop::DrawOnScreen(Screen_Alt &Screen)
         {
             //erase the previous location of each pixel if it's within the screen
             for (int i = 0; i < sizeof(draw_Points) / sizeof(draw_Points[0]); i++)
@@ -83,18 +94,7 @@
                     Screen.EditPixel(cur_x + draw_Points[i][0], cur_y + draw_Points[i][1], 1);
                 }    
             }
-
-
-            
-
-            //erase the previous location's rendering
-            
-
-            //draw the new location's rendering
-            
-        }
-
-
+        };
 
 ////////////////////////////////////////////
 //            RAINDROP CLASS              //
@@ -112,11 +112,8 @@
 
 Raindrop raindrops[1];
 
-
 long long int miliTim_Fall_Prev;
 long long int miliTim_Fall_Interval = 200;
-
-
 
 
 void Animation_Rain_Init(Screen_Alt &Screen)
@@ -147,12 +144,13 @@ void Animation_Rain_Periodic(Screen_Alt &Screen, bool in[6])
     }
 
     Screen_Alt raindrops_Screen;
-    for(int i=0; i<sizeof raindrops/sizeof raindrops[0]; i++)
+    for(int i=0; i<sizeof(raindrops)/sizeof(raindrops[0]); i++)
     {
         raindrops[i].DrawOnScreen(raindrops_Screen);
     }  
 
-
+    Screen_Alt fixScr_rain;
+    fix_rain_.DrawOnScreen(fixScr_rain);
 }
 
 

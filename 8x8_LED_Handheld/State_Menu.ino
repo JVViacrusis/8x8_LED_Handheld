@@ -5,7 +5,7 @@
 int Game_Selection_MinNum = 1;
 int Game_Selection_MaxNum = 4;
 
-int SelectionCurrent = Game_Selection_MinNum;
+int SelectionCurrent = Game_Selection_MinNum + 1;
 bool SelectionConfirmed;
 
 void Menu_Init(Screen_Alt &Screen)
@@ -15,7 +15,7 @@ void Menu_Init(Screen_Alt &Screen)
         firstClick[i] = true;
     }
 
-    SelectionCurrent = Game_Selection_MinNum + 1; // -1 because when exiting the game, you are holding the right button which causes the menu to go one to the right
+    SelectionCurrent -= 1; // -1 because when exiting the game, you are holding the right button which causes the menu to go one to the right
     SelectionConfirmed = false;
 }
 
@@ -55,15 +55,15 @@ void Menu_Periodic(Screen_Alt &Screen, bool in[6])
 
     
 
-    if(in[4] && firstClick[4])  //if click B first time, selection confirmed.
+    if(in[5] && firstClick[5])  //if click B first time, selection confirmed.
     {
-        firstClick[4] = false;
+        firstClick[5] = false;
 
         SelectionConfirmed = true;
     }
-    else if(!in[4] && !firstClick[4])  //first click reset
+    else if(!in[5] && !firstClick[5])  //first click reset
     {
-        firstClick[4] = true;
+        firstClick[5] = true;
     }
 
 
