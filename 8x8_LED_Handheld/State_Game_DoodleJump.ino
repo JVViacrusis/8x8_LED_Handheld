@@ -1,10 +1,5 @@
-//DONT NEED THIS BUT IT STOPS ERROR`S
+//DONT NEED THIS BUT IT STOPS ERRORS
 #include "Screen_Alt.h"
-
-
-
-
-
 
 void Game_DoodleJump_Init(Screen_Alt &Screen)
 {
@@ -30,7 +25,7 @@ void Game_DoodleJump_Init(Screen_Alt &Screen)
 
 void Game_DoodleJump_Periodic(Screen_Alt &Screen, bool in[6])
 {
-
+    
 }
 
 

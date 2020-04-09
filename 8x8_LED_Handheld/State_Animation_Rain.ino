@@ -1,19 +1,6 @@
 //DONT NEED THIS BUT IT STOPS ERRORS
 #include "Screen_Alt.h"
 
-
-class fix_rain
-{
-    public:
-        fix_rain();
-        void DrawOnScreen(Screen_Alt Screen);
-};
-fix_rain::fix_rain(){}
-void fix_rain::DrawOnScreen(Screen_Alt Screen){}
-fix_rain fix_rain_;
-
-
-
 ////////////////////////////////////////////
 //            RAINDROP CLASS              //
 //                 START                  //
@@ -118,6 +105,8 @@ long long int miliTim_Fall_Interval = 200;
 
 void Animation_Rain_Init(Screen_Alt &Screen)
 {
+    
+
     randomSeed(analogRead(13));
 
     for (int i = 0; i < 6; i++)
@@ -149,8 +138,7 @@ void Animation_Rain_Periodic(Screen_Alt &Screen, bool in[6])
         raindrops[i].DrawOnScreen(raindrops_Screen);
     }  
 
-    Screen_Alt fixScr_rain;
-    fix_rain_.DrawOnScreen(fixScr_rain);
+    
 }
 
 
