@@ -64,7 +64,7 @@
             {
                 cur_y = random(-8, 0);
                 // cur_x = random(0, 7);
-                // cur_x = random(0, 14);
+                cur_x = random(0, 14);
             }            
         }
 
@@ -104,12 +104,12 @@
 
 
 
+const int numRain = 8;
 
-
-Raindrop raindrops[8];
+Raindrop raindrops[numRain];
 
 long long int miliTim_Fall_Prev;
-long long int miliTim_Fall_Interval = 20;
+long long int miliTim_Fall_Interval = 100;
 
 
 void Animation_Rain_Init(Screen_Alt Screen)
@@ -125,19 +125,11 @@ void Animation_Rain_Init(Screen_Alt Screen)
 
     Screen.AllPixelsOff();
 
-    raindrops[0].Init(0, 0);
-    raindrops[1].Init(1, 0);
-    raindrops[2].Init(2, 0);
-    raindrops[3].Init(3, 0);
-    raindrops[4].Init(4, 0);
-    raindrops[5].Init(5, 0);
-    raindrops[6].Init(6, 0);
-    raindrops[7].Init(7, 0);
-    
-    for(int i=0; i<2; i++)
+    for(int i = 0; i < numRain; i++)
     {
+        raindrops[i].Init(i % 8, i/8);
         raindrops[i].DrawOnScreen(Screen);
-    }  
+    }
 
     miliTim_Fall_Prev = millis();
 }
@@ -147,7 +139,8 @@ void Animation_Rain_Periodic(Screen_Alt Screen, bool in[6])
     if((millis() - miliTim_Fall_Prev) > miliTim_Fall_Interval)
     {
         miliTim_Fall_Prev = millis();
-        for (int i=0; i<sizeof(raindrops)/sizeof(raindrops[0]); i++)
+        // for (int i=0; i<sizeof(raindrops)/sizeof(raindrops[0]); i++)
+        for (int i = 0; i < numRain; i++)
         {
             raindrops[i].Fall();
             raindrops[i].DrawOnScreen(Screen);
