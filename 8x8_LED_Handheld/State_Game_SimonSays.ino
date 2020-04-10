@@ -1,8 +1,5 @@
 #include "Screen_Alt.h"
 
-
-
-
 struct Quad
 {
   byte image[8];
@@ -25,6 +22,8 @@ int simon_RqrdSqnceStppr;
 long simon_millis_blinkNextInSqncePrev;
 int simon_millis_blinkNextInSqnceInterval = 800;
 
+boolean canClick = true;
+
 
 ////////////////////////////////////////////
 //             FUNCTION DEFS              //
@@ -33,38 +32,30 @@ int simon_millis_blinkNextInSqnceInterval = 800;
 
 void simon_CompareSequeneces()
 {
-    //check to see if the player's sequence checks out compared to the required sequence
-        boolean sqnceIsCorrect = true;
-        for(int i = 0; i < simon_PlyrSqnce.length(); i++)
-        {
-        //   Serial.println(simon_PlyrSqnce.length());
-        //   Serial.print("Player: ");
-        //   Serial.println(simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - i));
-        //   Serial.print("Required: ");
-        //   Serial.println(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - i));
-            //if the player's sequence does not match the required sequence, 
-            if(simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - i) 
-                != 
-               simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - i))
-            {   
-                sqnceIsCorrect = false;
-            }
-        }
 
-    //if the player's sequence checks out and it is just as long as the required sequence (player has inputed the perfect sequenece)
-        if(sqnceIsCorrect && simon_PlyrSqnce.length() == simon_RqrdSqnce.length())
-        {//make the sequence longer and play the animation
-            String simon_SqnceAddition = String(int(random(1, 5)));
-            simon_RqrdSqnce += simon_SqnceAddition;
+    //if sequences are matching so far
+        //if they are also of the same length, go on to the next round
+        //else if they are not yet the same length, keep matching
 
-            simon_ShowingSequence = true;
-            // Serial.println("CORRECT!");
-        }else if(!sqnceIsCorrect)
-        {
-            // Serial.println("WRONG YOU LOSE");
-        }
+    //else if they arent matching, you lose
+
+    char nextRqrdChar = simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - simon_PlyrSqnce.length() + 1);
+    char latestPlyrChar = simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - 1);
+
+    boolean sameChars = nextRqrdChar == latestPlyrChar;
+    boolean sameLength = simon_RqrdSqnce.length() == simon_PlyrSqnce.length();
+
+    // Serial.print("R: ");
+    // Serial.println(nextRqrdChar);
+    // Serial.print("P: ");
+    // Serial.println(latestPlyrChar);
+    Serial.print("SC?: ");
+    Serial.println(sameChars);
+    Serial.print("SL?: ");
+    Serial.println(sameLength);
+    Serial.println("");
+    Serial.println("");
 }
-
 
 ////////////////////////////////////////////
 //             FUNCTION DEFS              //
@@ -145,6 +136,9 @@ void Game_SimonSays_Init(Screen_Alt Screen)
   simon_SqnceAddition = String(int(random(1, 5)));
   simon_RqrdSqnce += simon_SqnceAddition;
 
+  Serial.print("Req: ");
+  Serial.println(simon_RqrdSqnce);
+
   simon_RqrdSqnceStppr = 0;
 
   memset(allQuads, B00000000, sizeof(allQuads));
@@ -159,7 +153,7 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
 {
 
     //click conditions
-    if (!simon_ShowingSequence) // only set to false while AI is showing sequence
+    if (!simon_ShowingSequence && canClick) // only set to false while AI is showing sequence
     {
         //up
         if (in[0] && firstClick[0]) //if click left first time
@@ -167,7 +161,7 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
             firstClick[0] = false;
 
             String simon_PlyrSqnceAddition = "1";                           //adds TOP to the player's input sequence
-            simon_PlyrSqnce = simon_PlyrSqnceAddition + simon_PlyrSqnce;    //
+            simon_PlyrSqnce += simon_PlyrSqnceAddition;    //
 
             simon_CompareSequeneces();
             
@@ -183,7 +177,7 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
             firstClick[1] = false;
 
             String simon_PlyrSqnceAddition = "2";                           //adds BOTTOM to the player's input sequence
-            simon_PlyrSqnce = simon_PlyrSqnceAddition + simon_PlyrSqnce;    //
+            simon_PlyrSqnce += simon_PlyrSqnceAddition;    //
 
             simon_CompareSequeneces();
             
@@ -200,7 +194,7 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
             firstClick[2] = false;
 
             String simon_PlyrSqnceAddition = "3";                           //adds LEFT to the player's input sequence
-            simon_PlyrSqnce = simon_PlyrSqnceAddition + simon_PlyrSqnce;    //
+            simon_PlyrSqnce += simon_PlyrSqnceAddition;    //
 
             simon_CompareSequeneces();
 
@@ -217,7 +211,7 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
             firstClick[3] = false;            
 
             String simon_PlyrSqnceAddition = "4";                           //adds RIGHT to the player's input sequence
-            simon_PlyrSqnce = simon_PlyrSqnceAddition + simon_PlyrSqnce;    //
+            simon_PlyrSqnce += simon_PlyrSqnceAddition;    //
 
             simon_CompareSequeneces();
 
@@ -236,7 +230,7 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
             if (millis() - simon_millis_blinkNextInSqncePrev > simon_millis_blinkNextInSqnceInterval)
             {
                 simon_millis_blinkNextInSqncePrev = millis();
-                switch (int(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - simon_RqrdSqnceStppr - 1)) - 48) // -48 => convert ascii value to int
+                switch (int(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - simon_RqrdSqnceStppr - 1)) - 48) // -48 => convert ascii number value to int number value
                 {
                     case 1://top
                         topQuad.curMillis = millis();
@@ -266,20 +260,23 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
         }
 
 
+    canClick = true;
   //check if told to blink
-    //top
+    //top 
     if(millis() - topQuad.curMillis < topQuad.blinkLength_1)
     {
         topQuad.isOn = true;
-    } else
+        canClick = false;
+    }else
     {
-        topQuad.isOn = false;
+        topQuad.isOn = false;   
     }
 
     //bottom
     if(millis() - bottomQuad.curMillis < bottomQuad.blinkLength_1)
     {
         bottomQuad.isOn = true;
+        canClick = false;
     }else
     {
         bottomQuad.isOn = false;
@@ -289,6 +286,7 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
     if(millis() - leftQuad.curMillis < leftQuad.blinkLength_1)
     {
         leftQuad.isOn = true;
+        canClick = false;
     }else
     {
         leftQuad.isOn = false;
@@ -298,6 +296,7 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
     if(millis() - rightQuad.curMillis < rightQuad.blinkLength_1)
     {
         rightQuad.isOn = true;
+        canClick = false;
     }else
     {
         rightQuad.isOn = false;
