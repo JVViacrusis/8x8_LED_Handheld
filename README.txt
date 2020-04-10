@@ -1,9 +1,15 @@
 This was a self-lead school project meant to explore the utility of shift registers when paired with Arduino. This was also an homage to my very first electronics project of a similar, but much more rudimentary design that was made 1.5 years prior 
 
 
+TO DO:
+    - Experiment with a constantly refreshed screen. (currently only re-draws an object when a position-changing function is called)
 
 
-
+GAME IDEAS:
+    - wack-a-mole (reaction game)
+    - tetris
+    - snake
+    - rock paper scissors somehow
 
 
 Unusual Commit History Explanation

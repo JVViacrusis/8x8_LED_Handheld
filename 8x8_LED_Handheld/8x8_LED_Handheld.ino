@@ -1,10 +1,4 @@
-/*
-    wack-a-mole (reaction game)
-    tetris
-    dodging game
-    snake
-    rock paper scissors somehow
-*/
+
 
 
 #include "Screen_Alt.h"

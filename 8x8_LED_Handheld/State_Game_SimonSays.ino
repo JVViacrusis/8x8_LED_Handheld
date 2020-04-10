@@ -2,6 +2,7 @@
 
 
 
+
 struct Quad
 {
   byte image[8];
@@ -23,6 +24,56 @@ String simon_RqrdSqnce;
 int simon_RqrdSqnceStppr;
 long simon_millis_blinkNextInSqncePrev;
 int simon_millis_blinkNextInSqnceInterval = 800;
+
+
+////////////////////////////////////////////
+//             FUNCTION DEFS              //
+//                 START                  //
+////////////////////////////////////////////
+
+void simon_CompareSequeneces()
+{
+    //check to see if the player's sequence checks out compared to the required sequence
+        boolean sqnceIsCorrect = true;
+        for(int i = 0; i < simon_PlyrSqnce.length(); i++)
+        {
+        //   Serial.println(simon_PlyrSqnce.length());
+        //   Serial.print("Player: ");
+        //   Serial.println(simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - i));
+        //   Serial.print("Required: ");
+        //   Serial.println(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - i));
+            //if the player's sequence does not match the required sequence, 
+            if(simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - i) 
+                != 
+               simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - i))
+            {   
+                sqnceIsCorrect = false;
+            }
+        }
+
+    //if the player's sequence checks out and it is just as long as the required sequence (player has inputed the perfect sequenece)
+        if(sqnceIsCorrect && simon_PlyrSqnce.length() == simon_RqrdSqnce.length())
+        {//make the sequence longer and play the animation
+            String simon_SqnceAddition = String(int(random(1, 5)));
+            simon_RqrdSqnce += simon_SqnceAddition;
+
+            simon_ShowingSequence = true;
+            // Serial.println("CORRECT!");
+        }else if(!sqnceIsCorrect)
+        {
+            // Serial.println("WRONG YOU LOSE");
+        }
+}
+
+
+////////////////////////////////////////////
+//             FUNCTION DEFS              //
+//                  END                   //
+////////////////////////////////////////////
+
+
+
+
 
 void Game_SimonSays_Init(Screen_Alt Screen)
 {
@@ -283,55 +334,6 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
     }
   Screen.EditFullScreen(allQuads);
   memset(allQuads, B00000000, 8);
-
-
-if(in[0])
-{
-    Screen.EditPixel(2, 0, 1);
-}else
-{
-    Screen.EditPixel(2, 0, 0);   
-}
-
-if(in[1])
-{
-    Screen.EditPixel(2, 2, 1);
-}else
-{
-    Screen.EditPixel(2, 2, 0);   
-}
-
-if(in[2])
-{
-    Screen.EditPixel(1, 1, 1);
-}else
-{
-    Screen.EditPixel(1, 1, 0);   
-}
-
-if(in[3])
-{
-    Screen.EditPixel(3, 1, 1);
-}else
-{
-    Screen.EditPixel(3, 1, 0);   
-}
-
-if(in[4])
-{
-    Screen.EditPixel(5, 1, 1);
-}else
-{
-    Screen.EditPixel(5, 1, 0);   
-}
-
-if(in[5])
-{
-    Screen.EditPixel(6, 0, 1);
-}else
-{
-    Screen.EditPixel(6, 0, 0);   
-}
 }
 
 
@@ -344,42 +346,6 @@ enum State Game_SimonSays_SwitchCheck(Screen_Alt Screen, bool in[6])
     ReturnState = MENU;
   }
   return ReturnState;
-}
-
-
-
-void simon_CompareSequeneces()
-{
-    //check to see if the player's sequence checks out compared to the required sequence
-        boolean sqnceIsCorrect = true;
-        for(int i = 0; i < simon_PlyrSqnce.length(); i++)
-        {
-        //   Serial.println(simon_PlyrSqnce.length());
-        //   Serial.print("Player: ");
-        //   Serial.println(simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - i));
-        //   Serial.print("Required: ");
-        //   Serial.println(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - i));
-            //if the player's sequence does not match the required sequence, 
-            if(simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - i) 
-                != 
-               simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - i))
-            {   
-                sqnceIsCorrect = false;
-            }
-        }
-
-    //if the player's sequence checks out and it is just as long as the required sequence (player has inputed the perfect sequenece)
-        if(sqnceIsCorrect && simon_PlyrSqnce.length() == simon_RqrdSqnce.length())
-        {//make the sequence longer and play the animation
-            String simon_SqnceAddition = String(int(random(1, 5)));
-            simon_RqrdSqnce += simon_SqnceAddition;
-
-            simon_ShowingSequence = true;
-            // Serial.println("CORRECT!");
-        }else if(!sqnceIsCorrect)
-        {
-            // Serial.println("WRONG YOU LOSE");
-        }
 }
 
 
