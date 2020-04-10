@@ -13,7 +13,10 @@ topQuad, bottomQuad, leftQuad, rightQuad;
 byte allQuads[8];
 
 boolean allQuadsOn;
+boolean simon_PlayingGame;
 boolean simon_ShowingSequence;
+boolean simon_Lose;
+boolean simon_NextRound;
 
 String simon_PlyrSqnce;
 String simon_RqrdSqnce;
@@ -30,132 +33,9 @@ boolean canClick = true;
 //                 START                  //
 ////////////////////////////////////////////
 
-void simon_CompareSequeneces()
+void simon_CheckPlayerInput(bool in[6])
 {
-
-    //if sequences are matching so far
-        //if they are also of the same length, go on to the next round
-        //else if they are not yet the same length, keep matching
-
-    //else if they arent matching, you lose
-
-    char nextRqrdChar = simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - simon_PlyrSqnce.length() + 1);
-    char latestPlyrChar = simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - 1);
-
-    boolean sameChars = nextRqrdChar == latestPlyrChar;
-    boolean sameLength = simon_RqrdSqnce.length() == simon_PlyrSqnce.length();
-
-    // Serial.print("R: ");
-    // Serial.println(nextRqrdChar);
-    // Serial.print("P: ");
-    // Serial.println(latestPlyrChar);
-    Serial.print("SC?: ");
-    Serial.println(sameChars);
-    Serial.print("SL?: ");
-    Serial.println(sameLength);
-    Serial.println("");
-    Serial.println("");
-}
-
-////////////////////////////////////////////
-//             FUNCTION DEFS              //
-//                  END                   //
-////////////////////////////////////////////
-
-
-
-
-
-void Game_SimonSays_Init(Screen_Alt Screen)
-{
-  randomSeed(analogRead(13));
-  
-  for (int i = 0; i < 6; i++)
-  {
-    firstClick[i] = 1;
-  }
-
-  topQuad.image[0] =    {B00011000};
-  topQuad.image[1] =    {B00111100};
-  topQuad.image[2] =    {B00111100};
-  topQuad.image[3] =    {B00000000};
-  topQuad.image[4] =    {B00000000};
-  topQuad.image[5] =    {B00000000};
-  topQuad.image[6] =    {B00000000};
-  topQuad.image[7] =    {B00000000};
-
-  bottomQuad.image[0] = {B00000000};
-  bottomQuad.image[1] = {B00000000};
-  bottomQuad.image[2] = {B00000000};
-  bottomQuad.image[3] = {B00000000};
-  bottomQuad.image[4] = {B00000000};
-  bottomQuad.image[5] = {B00111100};
-  bottomQuad.image[6] = {B00111100};
-  bottomQuad.image[7] = {B00011000};
-
-  leftQuad.image[0] =   {B00000000};
-  leftQuad.image[1] =   {B00000000};
-  leftQuad.image[2] =   {B01100000};
-  leftQuad.image[3] =   {B11100000};
-  leftQuad.image[4] =   {B11100000};
-  leftQuad.image[5] =   {B01100000};
-  leftQuad.image[6] =   {B00000000};
-  leftQuad.image[7] =   {B00000000};
-
-  rightQuad.image[0] =  {B00000000};
-  rightQuad.image[1] =  {B00000000};
-  rightQuad.image[2] =  {B00000110};
-  rightQuad.image[3] =  {B00000111};
-  rightQuad.image[4] =  {B00000111};
-  rightQuad.image[5] =  {B00000110};
-  rightQuad.image[6] =  {B00000000};
-  rightQuad.image[7] =  {B00000000};
-
-  topQuad.isOn = false;
-  bottomQuad.isOn = false;
-  leftQuad.isOn = false;
-  rightQuad.isOn = false;
-
-  allQuadsOn = false;
-  simon_ShowingSequence = true;
-
-  simon_PlyrSqnce = "5";
-  simon_RqrdSqnce = "5"; //5 is the tail
-  String simon_SqnceAddition = String(int(random(1, 5)));
-  simon_RqrdSqnce += simon_SqnceAddition;
-
-  simon_SqnceAddition = String(int(random(1, 5)));
-  simon_RqrdSqnce += simon_SqnceAddition;
-
-  simon_SqnceAddition = String(int(random(1, 5)));
-  simon_RqrdSqnce += simon_SqnceAddition;
-
-  simon_SqnceAddition = String(int(random(1, 5)));
-  simon_RqrdSqnce += simon_SqnceAddition;
-
-  simon_SqnceAddition = String(int(random(1, 5)));
-  simon_RqrdSqnce += simon_SqnceAddition;
-
-  Serial.print("Req: ");
-  Serial.println(simon_RqrdSqnce);
-
-  simon_RqrdSqnceStppr = 0;
-
-  memset(allQuads, B00000000, sizeof(allQuads));
-
-  simon_millis_blinkNextInSqncePrev = millis();
-
-//   Serial.println(simon_RqrdSqnce);
-}
-
-
-void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
-{
-
-    //click conditions
-    if (!simon_ShowingSequence && canClick) // only set to false while AI is showing sequence
-    {
-        //up
+    //up
         if (in[0] && firstClick[0]) //if click left first time
         {
             firstClick[0] = false;
@@ -221,47 +101,59 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
         {
             firstClick[3] = true;
         }
-    }
+}
 
 
-    //animate simon_Sequence
-        if(simon_ShowingSequence)
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+
+void simon_ShowSequence()
+{
+    if (millis() - simon_millis_blinkNextInSqncePrev > simon_millis_blinkNextInSqnceInterval)
+    {
+        simon_millis_blinkNextInSqncePrev = millis();
+        switch (int(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - simon_RqrdSqnceStppr - 1)) - 48) // -48 => convert ascii number value to int number value
         {
-            if (millis() - simon_millis_blinkNextInSqncePrev > simon_millis_blinkNextInSqnceInterval)
-            {
-                simon_millis_blinkNextInSqncePrev = millis();
-                switch (int(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - simon_RqrdSqnceStppr - 1)) - 48) // -48 => convert ascii number value to int number value
-                {
-                    case 1://top
-                        topQuad.curMillis = millis();
-                        simon_RqrdSqnceStppr++;
-                    break;
+            case 1://top
+                topQuad.curMillis = millis();
+                simon_RqrdSqnceStppr++;
+            break;
 
-                    case 2://bottom
-                        bottomQuad.curMillis = millis();
-                        simon_RqrdSqnceStppr++;
-                    break;
+            case 2://bottom
+                bottomQuad.curMillis = millis();
+                simon_RqrdSqnceStppr++;
+            break;
 
-                    case 3://left
-                        leftQuad.curMillis = millis();
-                        simon_RqrdSqnceStppr++;
-                    break;
+            case 3://left
+                leftQuad.curMillis = millis();
+                simon_RqrdSqnceStppr++;
+            break;
 
-                    case 4://right
-                        rightQuad.curMillis = millis();
-                        simon_RqrdSqnceStppr++;
-                    break;
+            case 4://right
+                rightQuad.curMillis = millis();
+                simon_RqrdSqnceStppr++;
+            break;
 
-                    case 5: //when it reaches the tail, stop displaying and allow user input
-                        simon_ShowingSequence = false;
-                    break;
-                }
-            }
+            case 5: //when it reaches the tail, stop displaying and allow user input
+                simon_ShowingSequence = false;
+            break;
         }
+    }
+}
 
 
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+
+void simon_UpdateBlinkStatus()
+{
     canClick = true;
-  //check if told to blink
     //top 
     if(millis() - topQuad.curMillis < topQuad.blinkLength_1)
     {
@@ -301,8 +193,16 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
     {
         rightQuad.isOn = false;
     }
+}
 
-    //display if told to display
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+
+void simon_DisplayBlinks(Screen_Alt Screen)
+{
     if (topQuad.isOn || allQuadsOn)
     {
         for (int i = 0; i < 8; i++)
@@ -333,6 +233,176 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
     }
   Screen.EditFullScreen(allQuads);
   memset(allQuads, B00000000, 8);
+}
+
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+
+void simon_CompareSequeneces()
+{
+
+    //if sequences are matching so far
+        //if they are also of the same length, go on to the next round
+        //else if they are not yet the same length, keep matching
+
+    //else if they arent matching, you lose
+
+    char nextRqrdChar = simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - simon_PlyrSqnce.length() + 1);
+    char latestPlyrChar = simon_PlyrSqnce.charAt(simon_PlyrSqnce.length() - 1);
+
+    boolean sameChars = nextRqrdChar == latestPlyrChar;
+    boolean sameLength = simon_RqrdSqnce.length() == simon_PlyrSqnce.length();
+
+    // Serial.print("R: ");
+    // Serial.println(nextRqrdChar);
+    // Serial.print("P: ");
+    // Serial.println(latestPlyrChar);
+    Serial.print("SC?: ");
+    Serial.println(sameChars);
+    Serial.print("SL?: ");
+    Serial.println(sameLength);
+    Serial.println("");
+    Serial.println("");
+
+
+    if(!sameChars)
+    {
+        simon_PlayingGame = false;
+        simon_Lose = true;
+    }else if(sameChars)
+    {
+        if(sameLength)
+        {
+            simon_NextRound = true;
+        }else if(!sameLength)
+        {
+            //just let it keep going
+        }
+    }
+}
+////////////////////////////////////////////
+//             FUNCTION DEFS              //
+//                  END                   //
+////////////////////////////////////////////
+
+
+
+
+
+void Game_SimonSays_Init(Screen_Alt Screen)
+{
+  randomSeed(analogRead(13));
+  
+  for (int i = 0; i < 6; i++)
+  {
+    firstClick[i] = 1;
+  }
+
+  topQuad.image[0] =    {B00011000};
+  topQuad.image[1] =    {B00111100};
+  topQuad.image[2] =    {B00111100};
+  topQuad.image[3] =    {B00000000};
+  topQuad.image[4] =    {B00000000};
+  topQuad.image[5] =    {B00000000};
+  topQuad.image[6] =    {B00000000};
+  topQuad.image[7] =    {B00000000};
+
+  bottomQuad.image[0] = {B00000000};
+  bottomQuad.image[1] = {B00000000};
+  bottomQuad.image[2] = {B00000000};
+  bottomQuad.image[3] = {B00000000};
+  bottomQuad.image[4] = {B00000000};
+  bottomQuad.image[5] = {B00111100};
+  bottomQuad.image[6] = {B00111100};
+  bottomQuad.image[7] = {B00011000};
+
+  leftQuad.image[0] =   {B00000000};
+  leftQuad.image[1] =   {B00000000};
+  leftQuad.image[2] =   {B01100000};
+  leftQuad.image[3] =   {B11100000};
+  leftQuad.image[4] =   {B11100000};
+  leftQuad.image[5] =   {B01100000};
+  leftQuad.image[6] =   {B00000000};
+  leftQuad.image[7] =   {B00000000};
+
+  rightQuad.image[0] =  {B00000000};
+  rightQuad.image[1] =  {B00000000};
+  rightQuad.image[2] =  {B00000110};
+  rightQuad.image[3] =  {B00000111};
+  rightQuad.image[4] =  {B00000111};
+  rightQuad.image[5] =  {B00000110};
+  rightQuad.image[6] =  {B00000000};
+  rightQuad.image[7] =  {B00000000};
+
+  topQuad.isOn = false;
+  bottomQuad.isOn = false;
+  leftQuad.isOn = false;
+  rightQuad.isOn = false;
+
+  allQuadsOn = false;
+  simon_PlayingGame = true;
+  simon_ShowingSequence = true;
+  simon_Lose = false;
+  simon_NextRound = false;
+
+  simon_PlyrSqnce = "5";
+  simon_RqrdSqnce = "5"; //5 is the tail
+  String simon_SqnceAddition = String(int(random(1, 5)));
+  simon_RqrdSqnce += simon_SqnceAddition;
+
+  simon_SqnceAddition = String(int(random(1, 5)));
+  simon_RqrdSqnce += simon_SqnceAddition;
+
+  simon_SqnceAddition = String(int(random(1, 5)));
+  simon_RqrdSqnce += simon_SqnceAddition;
+
+  simon_SqnceAddition = String(int(random(1, 5)));
+  simon_RqrdSqnce += simon_SqnceAddition;
+
+  simon_SqnceAddition = String(int(random(1, 5)));
+  simon_RqrdSqnce += simon_SqnceAddition;
+
+  Serial.print("Req: ");
+  Serial.println(simon_RqrdSqnce);
+
+  simon_RqrdSqnceStppr = 0;
+
+  memset(allQuads, B00000000, sizeof(allQuads));
+
+  simon_millis_blinkNextInSqncePrev = millis();
+
+//   Serial.println(simon_RqrdSqnce);
+}
+
+
+void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
+{
+
+    if(simon_PlayingGame)
+    {
+        //click conditions
+        if (!simon_ShowingSequence && canClick) // only set to false while AI is showing sequence
+        {
+            simon_CheckPlayerInput(in);
+        }
+
+        //animate simon_Sequence
+        if(simon_ShowingSequence)
+        {
+            simon_ShowSequence();
+        }
+
+        //check if told to blink and display those updated statuses
+        simon_UpdateBlinkStatus();
+        simon_DisplayBlinks(Screen);
+    }else if(simon_Lose)
+    {
+        
+    }
 }
 
 
