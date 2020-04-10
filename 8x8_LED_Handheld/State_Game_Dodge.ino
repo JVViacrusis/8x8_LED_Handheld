@@ -95,7 +95,7 @@ class Dodger
         
         void Init(int init_x, int init_y);
 
-        void DrawOnScreen(Screen_Alt &Screen);
+        void DrawOnScreen(Screen_Alt Screen);
 
     private:
         int cur_X;  
@@ -137,7 +137,7 @@ void Dodger::Init(int init_x, int init_y)
 }
 
 
-void Dodger::DrawOnScreen(Screen_Alt &Screen)
+void Dodger::DrawOnScreen(Screen_Alt Screen)
 {
     Screen.EditPixel(prev_X + draw_Points[0][0], prev_Y + draw_Points[0][1], 0);
 
@@ -158,7 +158,7 @@ Dodger Dodge_Player;
 long long int miliTim_EneMoveD_Prev;
 long long int miliTim_EneMoveD_Interval = 500;
 
-void Game_Dodge_Init(Screen_Alt &Screen)
+void Game_Dodge_Init(Screen_Alt Screen)
 {
     for(int i = 0; i < 6; i++)
     {
@@ -176,7 +176,7 @@ void Game_Dodge_Init(Screen_Alt &Screen)
 }
 
 
-void Game_Dodge_Periodic(Screen_Alt &Screen, bool in[6])
+void Game_Dodge_Periodic(Screen_Alt Screen, bool in[6])
 {
     if((millis() - miliTim_EneMoveD_Prev) > miliTim_EneMoveD_Interval)
     {
@@ -184,16 +184,16 @@ void Game_Dodge_Periodic(Screen_Alt &Screen, bool in[6])
         Enemies[0].Move(0, 1);
     }
 
-    Screen_Alt Enemy_Screen;
-    Enemies[0].DrawOnScreen(Enemy_Screen);
-    Enemies[1].DrawOnScreen(Enemy_Screen);
+    
+    Enemies[0].DrawOnScreen(Screen);
+    Enemies[1].DrawOnScreen(Screen);
 
     Screen_Alt DodgePlayer_Screen;
-    Dodge_Player.DrawOnScreen(DodgePlayer_Screen);
+    Dodge_Player.DrawOnScreen(Screen);
 }
 
 
-enum State Game_Dodge_SwitchCheck(Screen_Alt &Screen, bool in[6])
+enum State Game_Dodge_SwitchCheck(Screen_Alt Screen, bool in[6])
 {
     State ReturnState = GAME_DODGE;
 

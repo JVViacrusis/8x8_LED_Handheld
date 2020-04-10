@@ -15,7 +15,7 @@
 
                 void Fall();
 
-                void DrawOnScreen(Screen_Alt &Screen);
+                void DrawOnScreen(Screen_Alt Screen);
 
             private:
                 signed int cur_x;
@@ -60,7 +60,7 @@
         }
 
         
-        void Raindrop::DrawOnScreen(Screen_Alt &Screen)
+        void Raindrop::DrawOnScreen(Screen_Alt Screen)
         {
             //erase the previous location of each pixel if it's within the screen
             for (int i = 0; i < sizeof(draw_Points) / sizeof(draw_Points[0]); i++)
@@ -103,7 +103,7 @@ long long int miliTim_Fall_Prev;
 long long int miliTim_Fall_Interval = 200;
 
 
-void Animation_Rain_Init(Screen_Alt &Screen)
+void Animation_Rain_Init(Screen_Alt Screen)
 {
     
 
@@ -121,7 +121,7 @@ void Animation_Rain_Init(Screen_Alt &Screen)
     miliTim_Fall_Prev = millis();
 }
 
-void Animation_Rain_Periodic(Screen_Alt &Screen, bool in[6])
+void Animation_Rain_Periodic(Screen_Alt Screen, bool in[6])
 {
     if((millis() - miliTim_Fall_Prev) > miliTim_Fall_Interval)
     {
@@ -132,17 +132,14 @@ void Animation_Rain_Periodic(Screen_Alt &Screen, bool in[6])
         }    
     }
 
-    Screen_Alt raindrops_Screen;
     for(int i=0; i<sizeof(raindrops)/sizeof(raindrops[0]); i++)
     {
-        raindrops[i].DrawOnScreen(raindrops_Screen);
+        raindrops[i].DrawOnScreen(Screen);
     }  
-
-    
 }
 
 
-enum State Animation_Rain_SwitchCheck(Screen_Alt &Screen, bool in[6])
+enum State Animation_Rain_SwitchCheck(Screen_Alt Screen, bool in[6])
 {
     State ReturnState = ANIMATION_RAIN;
 

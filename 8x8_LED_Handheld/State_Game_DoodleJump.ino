@@ -1,7 +1,7 @@
 //DONT NEED THIS BUT IT STOPS ERRORS
 #include "Screen_Alt.h"
 
-void Game_DoodleJump_Init(Screen_Alt &Screen)
+void Game_DoodleJump_Init(Screen_Alt Screen)
 {
     for(int i = 0; i < 6; i++)
     {
@@ -23,13 +23,13 @@ void Game_DoodleJump_Init(Screen_Alt &Screen)
 }
 
 
-void Game_DoodleJump_Periodic(Screen_Alt &Screen, bool in[6])
+void Game_DoodleJump_Periodic(Screen_Alt Screen, bool in[6])
 {
     
 }
 
 
-enum State Game_DoodleJump_SwitchCheck(Screen_Alt &Screen, bool in[6])
+enum State Game_DoodleJump_SwitchCheck(Screen_Alt Screen, bool in[6])
 {
     State ReturnState = GAME_DOODLEJUMP;
 

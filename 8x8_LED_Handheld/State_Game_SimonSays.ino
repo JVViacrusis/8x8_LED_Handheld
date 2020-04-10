@@ -1,5 +1,7 @@
 #include "Screen_Alt.h"
 
+
+
 struct Quad
 {
   byte image[8];
@@ -22,7 +24,7 @@ int simon_RqrdSqnceStppr;
 long simon_millis_blinkNextInSqncePrev;
 int simon_millis_blinkNextInSqnceInterval = 800;
 
-void Game_SimonSays_Init(Screen_Alt &Screen)
+void Game_SimonSays_Init(Screen_Alt Screen)
 {
   randomSeed(analogRead(13));
   
@@ -102,7 +104,7 @@ void Game_SimonSays_Init(Screen_Alt &Screen)
 }
 
 
-void Game_SimonSays_Periodic(Screen_Alt &Screen, bool in[6])
+void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
 {
 
     //click conditions
@@ -281,10 +283,59 @@ void Game_SimonSays_Periodic(Screen_Alt &Screen, bool in[6])
     }
   Screen.EditFullScreen(allQuads);
   memset(allQuads, B00000000, 8);
+
+
+if(in[0])
+{
+    Screen.EditPixel(2, 0, 1);
+}else
+{
+    Screen.EditPixel(2, 0, 0);   
+}
+
+if(in[1])
+{
+    Screen.EditPixel(2, 2, 1);
+}else
+{
+    Screen.EditPixel(2, 2, 0);   
+}
+
+if(in[2])
+{
+    Screen.EditPixel(1, 1, 1);
+}else
+{
+    Screen.EditPixel(1, 1, 0);   
+}
+
+if(in[3])
+{
+    Screen.EditPixel(3, 1, 1);
+}else
+{
+    Screen.EditPixel(3, 1, 0);   
+}
+
+if(in[4])
+{
+    Screen.EditPixel(5, 1, 1);
+}else
+{
+    Screen.EditPixel(5, 1, 0);   
+}
+
+if(in[5])
+{
+    Screen.EditPixel(6, 0, 1);
+}else
+{
+    Screen.EditPixel(6, 0, 0);   
+}
 }
 
 
-enum State Game_SimonSays_SwitchCheck(Screen_Alt &Screen, bool in[6])
+enum State Game_SimonSays_SwitchCheck(Screen_Alt Screen, bool in[6])
 {
   State ReturnState = GAME_SIMONSAYS;
 

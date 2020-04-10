@@ -8,7 +8,7 @@ int Game_Selection_MaxNum = 4;
 int SelectionCurrent = Game_Selection_MinNum + 1;
 bool SelectionConfirmed;
 
-void Menu_Init(Screen_Alt &Screen)
+void Menu_Init(Screen_Alt Screen)
 {
     for(int i = 0; i < 6; i++)
     {
@@ -20,7 +20,7 @@ void Menu_Init(Screen_Alt &Screen)
 }
 
 
-void Menu_Periodic(Screen_Alt &Screen, bool in[6])
+void Menu_Periodic(Screen_Alt Screen, bool in[6])
 {
     SelectionConfirmed = false;
     //Selection Changing
@@ -120,7 +120,7 @@ void Menu_Periodic(Screen_Alt &Screen, bool in[6])
 }
 
 
-enum State Menu_SwitchCheck(Screen_Alt &Screen, bool in[6])
+enum State Menu_SwitchCheck(Screen_Alt Screen, bool in[6])
 {
     State ReturnState = MENU;   //default repeat current state unless told changed to different state
 
