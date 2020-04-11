@@ -16,6 +16,8 @@ boolean allQuadsOn;
 boolean simon_PlayingGame;
 boolean simon_ShowingSequence;
 boolean simon_Lose;
+boolean simon_PlayingLoseAnimation;
+boolean simon_ShowingScore;
 boolean simon_NextRound;
 
 String simon_PlyrSqnce;
@@ -32,6 +34,49 @@ boolean canClick = true;
 //             FUNCTION DEFS              //
 //                 START                  //
 ////////////////////////////////////////////
+
+void simon_GameStart()
+{
+  topQuad.isOn = false;
+  bottomQuad.isOn = false;
+  leftQuad.isOn = false;
+  rightQuad.isOn = false;
+
+  allQuadsOn = false;
+  simon_PlayingGame = true;
+  simon_ShowingSequence = true;
+  simon_Lose = false;
+  simon_PlayingLoseAnimation = false;
+  simon_ShowingScore = false;
+  simon_NextRound = false;
+
+  simon_PlyrSqnce = "5";
+  simon_RqrdSqnce = "5"; //5 is the tail
+
+  String simon_SqnceAddition = String(int(random(1, 5)));
+  simon_RqrdSqnce += simon_SqnceAddition;
+
+//   simon_SqnceAddition = String(int(random(1, 5)));
+//   simon_RqrdSqnce += simon_SqnceAddition;
+
+//   simon_SqnceAddition = String(int(random(1, 5)));
+//   simon_RqrdSqnce += simon_SqnceAddition;
+
+//   simon_SqnceAddition = String(int(random(1, 5)));
+//   simon_RqrdSqnce += simon_SqnceAddition;
+
+//   simon_SqnceAddition = String(int(random(1, 5)));
+//   simon_RqrdSqnce += simon_SqnceAddition;
+
+//   Serial.print("Req: ");
+//   Serial.println(simon_RqrdSqnce);
+
+  simon_RqrdSqnceStppr = 0;
+
+  memset(allQuads, B00000000, sizeof(allQuads));
+
+  simon_millis_blinkNextInSqncePrev = millis();
+}
 
 void simon_CheckPlayerInput(bool in[6])
 {
@@ -274,6 +319,7 @@ void simon_CompareSequeneces()
     {
         simon_PlayingGame = false;
         simon_Lose = true;
+        simon_PlayingLoseAnimation = true;
     }else if(sameChars)
     {
         if(sameLength)
@@ -284,6 +330,37 @@ void simon_CompareSequeneces()
             //just let it keep going
         }
     }
+}
+
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+
+void simon_PlayLoseAnimation()
+{
+    
+
+    //WHEN DONE
+    simon_PlayingLoseAnimation = false;
+    simon_ShowingScore = true;
+}
+
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+
+void simon_ShowScore()
+{
+
+
+    //WHEN DONE
+    simon_ShowingScore = false;
 }
 ////////////////////////////////////////////
 //             FUNCTION DEFS              //
@@ -296,7 +373,7 @@ void simon_CompareSequeneces()
 
 void Game_SimonSays_Init(Screen_Alt Screen)
 {
-  randomSeed(analogRead(13));
+  randomSeed(analogRead(A6));
   
   for (int i = 0; i < 6; i++)
   {
@@ -339,43 +416,7 @@ void Game_SimonSays_Init(Screen_Alt Screen)
   rightQuad.image[6] =  {B00000000};
   rightQuad.image[7] =  {B00000000};
 
-  topQuad.isOn = false;
-  bottomQuad.isOn = false;
-  leftQuad.isOn = false;
-  rightQuad.isOn = false;
-
-  allQuadsOn = false;
-  simon_PlayingGame = true;
-  simon_ShowingSequence = true;
-  simon_Lose = false;
-  simon_NextRound = false;
-
-  simon_PlyrSqnce = "5";
-  simon_RqrdSqnce = "5"; //5 is the tail
-
-  String simon_SqnceAddition = String(int(random(1, 5)));
-  simon_RqrdSqnce += simon_SqnceAddition;
-
-  simon_SqnceAddition = String(int(random(1, 5)));
-  simon_RqrdSqnce += simon_SqnceAddition;
-
-  simon_SqnceAddition = String(int(random(1, 5)));
-  simon_RqrdSqnce += simon_SqnceAddition;
-
-  simon_SqnceAddition = String(int(random(1, 5)));
-  simon_RqrdSqnce += simon_SqnceAddition;
-
-  simon_SqnceAddition = String(int(random(1, 5)));
-  simon_RqrdSqnce += simon_SqnceAddition;
-
-  Serial.print("Req: ");
-  Serial.println(simon_RqrdSqnce);
-
-  simon_RqrdSqnceStppr = 0;
-
-  memset(allQuads, B00000000, sizeof(allQuads));
-
-  simon_millis_blinkNextInSqncePrev = millis();
+    simon_GameStart();
 
 //   Serial.println(simon_RqrdSqnce);
 }
@@ -417,9 +458,20 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
         //check if told to blink and display those updated statuses
         simon_UpdateBlinkStatus();
         simon_DisplayBlinks(Screen);
+
     }else if(simon_Lose)
     {
-        
+        if(simon_PlayingLoseAnimation)
+        {
+            simon_PlayLoseAnimation();
+        }else if(simon_ShowingScore)
+        {
+            simon_ShowScore();
+        }
+        else
+        {
+            simon_GameStart();
+        }
     }
 }
 
