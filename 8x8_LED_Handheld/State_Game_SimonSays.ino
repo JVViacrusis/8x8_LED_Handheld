@@ -1,5 +1,4 @@
 #include "Screen_Alt.h"
-
 struct Quad
 {
   byte image[8];
@@ -27,6 +26,15 @@ int simon_RqrdSqnceStppr;
 long simon_millis_blinkNextInSqncePrev;
 int simon_millis_blinkNextInSqnceInterval = 800;
 
+int simon_FinalScore;
+int simon_ScoreStppr;
+long simon_millis_loseSequencePrev;
+int simon_millis_loseSequenceInterval;
+
+boolean simon_isWaiting;
+long simon_millis_waitPrev;
+int simon_millis_waitInterval = 4000;
+
 boolean canClick = true;
 
 
@@ -49,6 +57,7 @@ void simon_GameStart()
   simon_PlayingLoseAnimation = false;
   simon_ShowingScore = false;
   simon_NextRound = false;
+  simon_isWaiting = false;
 
   simon_PlyrSqnce = "5";
   simon_RqrdSqnce = "5"; //5 is the tail
@@ -72,10 +81,14 @@ void simon_GameStart()
 //   Serial.println(simon_RqrdSqnce);
 
   simon_RqrdSqnceStppr = 0;
+  simon_ScoreStppr = 0;
+
+  simon_FinalScore = 0;
 
   memset(allQuads, B00000000, sizeof(allQuads));
 
   simon_millis_blinkNextInSqncePrev = millis();
+  simon_millis_loseSequenceInterval = 0;
 }
 
 void simon_CheckPlayerInput(bool in[6])
@@ -320,6 +333,7 @@ void simon_CompareSequeneces()
         simon_PlayingGame = false;
         simon_Lose = true;
         simon_PlayingLoseAnimation = true;
+        simon_FinalScore = simon_RqrdSqnce.length() - 2;
 
         //for lose animation
         Serial.println(nextRqrdChar);
@@ -405,12 +419,46 @@ void simon_PlayLoseAnimation()
 /////////////////////////////////////////////
 
 
-void simon_ShowScore()
+void simon_ShowScore(Screen_Alt Screen)
 {
+    //if interval
+        //reset interval
+        //update interval time to correspond with score. (interval = 1000 - 100 * score with minimum of 100)
+        //turn_pixel_on(scoreStppr);
+        //ScoreStppr++;
+        //if scoreStppr > finalScore
+            //simon_ShowingScore = false;
+
+    if(millis() - simon_millis_loseSequencePrev > simon_millis_loseSequenceInterval)
+    {
+        if(!simon_isWaiting)
+        {
+            simon_millis_loseSequencePrev = millis();
+            simon_millis_loseSequenceInterval = 500 - (50 * (simon_FinalScore - simon_ScoreStppr));
+            simon_millis_loseSequenceInterval = simon_millis_loseSequenceInterval > 60 ? simon_millis_loseSequenceInterval : 60;
+
+            int x = (simon_ScoreStppr - 1) % 8;
+            int y = (simon_ScoreStppr - 1) / 8;
+            Screen.EditPixel(x, y, 1);
+
+            simon_ScoreStppr++;
+        }
+
+        if(simon_ScoreStppr == simon_FinalScore && !simon_isWaiting)
+        {
+            //start witing for a short time
+            simon_isWaiting = true;
+            simon_millis_waitPrev = millis();
+        }else if(simon_isWaiting && millis() - simon_millis_waitPrev > simon_millis_waitInterval)
+        {
+            simon_ShowingScore = false;
+        }
+    }
+
 
 
     //WHEN DONE
-    simon_ShowingScore = false;
+    // simon_ShowingScore = false;
 }
 ////////////////////////////////////////////
 //             FUNCTION DEFS              //
@@ -521,7 +569,7 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
             simon_DisplayBlinks(Screen);
         }else if(simon_ShowingScore)
         {
-            simon_ShowScore();
+            simon_ShowScore(Screen);
         }
         else
         {
