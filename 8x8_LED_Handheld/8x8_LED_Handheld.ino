@@ -114,7 +114,8 @@ void loop()
             if(First_Cycle)
             {
                 First_Cycle = false;
-                Game_SimonSays_Init(m_Screen);
+                m_IOControl.GetButtonStates(input);
+                Game_SimonSays_Init(m_Screen, input);
             }
                 
             if(!First_Cycle)

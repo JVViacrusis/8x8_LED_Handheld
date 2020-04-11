@@ -4,10 +4,10 @@ struct Quad
   byte image[8];
   boolean isOn;
   long curMillis = 0;
-  int blinkLength_1 = 400;
-
 }
 topQuad, bottomQuad, leftQuad, rightQuad;
+int simon_QuadBlinkLength;
+
 
 byte allQuads[8];
 
@@ -24,7 +24,7 @@ String simon_RqrdSqnce;
 
 int simon_RqrdSqnceStppr;
 long simon_millis_blinkNextInSqncePrev;
-int simon_millis_blinkNextInSqnceInterval = 800;
+int simon_millis_blinkNextInSqnceInterval;
 
 int simon_FinalScore;
 int simon_ScoreStppr;
@@ -214,7 +214,7 @@ void simon_UpdateBlinkStatus()
 {
     canClick = true;
     //top 
-    if(millis() - topQuad.curMillis < topQuad.blinkLength_1)
+    if(millis() - topQuad.curMillis < simon_QuadBlinkLength)
     {
         topQuad.isOn = true;
         canClick = false;
@@ -224,7 +224,7 @@ void simon_UpdateBlinkStatus()
     }
 
     //bottom
-    if(millis() - bottomQuad.curMillis < bottomQuad.blinkLength_1)
+    if(millis() - bottomQuad.curMillis < simon_QuadBlinkLength)
     {
         bottomQuad.isOn = true;
         canClick = false;
@@ -234,7 +234,7 @@ void simon_UpdateBlinkStatus()
     }
 
     //left
-    if(millis() - leftQuad.curMillis < leftQuad.blinkLength_1)
+    if(millis() - leftQuad.curMillis < simon_QuadBlinkLength)
     {
         leftQuad.isOn = true;
         canClick = false;
@@ -244,7 +244,7 @@ void simon_UpdateBlinkStatus()
     }
 
     //right
-    if(millis() - rightQuad.curMillis < rightQuad.blinkLength_1)
+    if(millis() - rightQuad.curMillis < simon_QuadBlinkLength)
     {
         rightQuad.isOn = true;
         canClick = false;
@@ -320,12 +320,12 @@ void simon_CompareSequeneces()
     // Serial.println(nextRqrdChar);
     // Serial.print("P: ");
     // Serial.println(latestPlyrChar);
-    Serial.print("SC?: ");
-    Serial.println(sameChars);
-    Serial.print("SL?: ");
-    Serial.println(sameLength);
-    Serial.println("");
-    Serial.println("");
+    // Serial.print("SC?: ");
+    // Serial.println(sameChars);
+    // Serial.print("SL?: ");
+    // Serial.println(sameLength);
+    // Serial.println("");
+    // Serial.println("");
 
 
     if(!sameChars)
@@ -334,11 +334,15 @@ void simon_CompareSequeneces()
         simon_Lose = true;
         simon_PlayingLoseAnimation = true;
         simon_FinalScore = simon_RqrdSqnce.length() - 2;
+        // Serial.println(nextRqrdChar);
 
         //for lose animation
-        Serial.println(nextRqrdChar);
-        simon_RqrdSqnce = "5" + String(nextRqrdChar) + String(nextRqrdChar) + String(nextRqrdChar) + String(nextRqrdChar);
-        Serial.println(simon_RqrdSqnce);
+        simon_RqrdSqnce = "5";
+        for(int i = 0; i < simon_QuadBlinkLength % 100; i++)
+        {
+            simon_RqrdSqnce += String(nextRqrdChar);
+        }
+        // Serial.println(simon_RqrdSqnce);
         simon_RqrdSqnceStppr = 0;
         simon_millis_blinkNextInSqncePrev = millis();
         simon_ShowingSequence = true;
@@ -364,41 +368,34 @@ void simon_CompareSequeneces()
 
 void simon_PlayLoseAnimation()
 {
-    // Serial.println("PL");
     if (millis() - simon_millis_blinkNextInSqncePrev > simon_millis_blinkNextInSqnceInterval)
     {
         simon_millis_blinkNextInSqncePrev = millis();
-        Serial.println(int(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - simon_RqrdSqnceStppr - 1)) - 48);
         switch (int(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - simon_RqrdSqnceStppr - 1)) - 48) // -48 => convert ascii number value to int number value
         {
             case 1://top
                 topQuad.curMillis = millis();
                 simon_RqrdSqnceStppr++;
-                Serial.println(1);
             break;
 
             case 2://bottom
                 bottomQuad.curMillis = millis();
                 simon_RqrdSqnceStppr++;
-                Serial.println(2);
             break;
 
             case 3://left
                 leftQuad.curMillis = millis();
                 simon_RqrdSqnceStppr++;
-                Serial.println(3);
             break;
 
             case 4://right
                 rightQuad.curMillis = millis();
                 simon_RqrdSqnceStppr++;
-                Serial.println(4);
             break;
 
             case 5: //when it reaches the tail, stop displaying and allow user input
                 simon_ShowingSequence = false;
                 simon_RqrdSqnceStppr = 0;
-                Serial.println(5);
             break;
         }
     }
@@ -469,7 +466,7 @@ void simon_ShowScore(Screen_Alt Screen)
 
 
 
-void Game_SimonSays_Init(Screen_Alt Screen)
+void Game_SimonSays_Init(Screen_Alt Screen, bool in[6])
 {
   randomSeed(analogRead(A6));
   
@@ -514,6 +511,22 @@ void Game_SimonSays_Init(Screen_Alt Screen)
   rightQuad.image[6] =  {B00000000};
   rightQuad.image[7] =  {B00000000};
 
+  //Speed Mods (final digits represent how many times the correct sequence-step is blinked when you lose)
+  if(in[0] && in[4]) //Ultra Turbo (UP, A)
+  {
+    simon_QuadBlinkLength = 108;
+    simon_millis_blinkNextInSqnceInterval = 200;
+  }else if(in[4]) //Turbo (Just A)
+  {
+    simon_QuadBlinkLength = 205;
+    simon_millis_blinkNextInSqnceInterval = 400;
+  }else
+  {
+    simon_QuadBlinkLength = 403;
+    simon_millis_blinkNextInSqnceInterval = 800;
+  }
+  
+
     simon_GameStart();
 
 //   Serial.println(simon_RqrdSqnce);
@@ -548,7 +561,7 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
             char simon_SqnceAddition = char(int(random(1, 5)) + 48); // +48 to convert from ascii value to ascii char
             simon_RqrdSqnce.setCharAt(0, simon_SqnceAddition);
             simon_RqrdSqnce = "5" + simon_RqrdSqnce;
-            Serial.println(simon_RqrdSqnce);
+            // Serial.println(simon_RqrdSqnce);
 
             simon_ShowingSequence = true;
             simon_millis_blinkNextInSqncePrev = millis();
