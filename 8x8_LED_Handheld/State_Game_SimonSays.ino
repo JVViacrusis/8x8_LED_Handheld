@@ -320,6 +320,15 @@ void simon_CompareSequeneces()
         simon_PlayingGame = false;
         simon_Lose = true;
         simon_PlayingLoseAnimation = true;
+
+        //for lose animation
+        Serial.println(nextRqrdChar);
+        simon_RqrdSqnce = "5" + String(nextRqrdChar) + String(nextRqrdChar) + String(nextRqrdChar) + String(nextRqrdChar);
+        Serial.println(simon_RqrdSqnce);
+        simon_RqrdSqnceStppr = 0;
+        simon_millis_blinkNextInSqncePrev = millis();
+        simon_ShowingSequence = true;
+
     }else if(sameChars)
     {
         if(sameLength)
@@ -341,11 +350,52 @@ void simon_CompareSequeneces()
 
 void simon_PlayLoseAnimation()
 {
-    
+    // Serial.println("PL");
+    if (millis() - simon_millis_blinkNextInSqncePrev > simon_millis_blinkNextInSqnceInterval)
+    {
+        simon_millis_blinkNextInSqncePrev = millis();
+        Serial.println(int(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - simon_RqrdSqnceStppr - 1)) - 48);
+        switch (int(simon_RqrdSqnce.charAt(simon_RqrdSqnce.length() - simon_RqrdSqnceStppr - 1)) - 48) // -48 => convert ascii number value to int number value
+        {
+            case 1://top
+                topQuad.curMillis = millis();
+                simon_RqrdSqnceStppr++;
+                Serial.println(1);
+            break;
+
+            case 2://bottom
+                bottomQuad.curMillis = millis();
+                simon_RqrdSqnceStppr++;
+                Serial.println(2);
+            break;
+
+            case 3://left
+                leftQuad.curMillis = millis();
+                simon_RqrdSqnceStppr++;
+                Serial.println(3);
+            break;
+
+            case 4://right
+                rightQuad.curMillis = millis();
+                simon_RqrdSqnceStppr++;
+                Serial.println(4);
+            break;
+
+            case 5: //when it reaches the tail, stop displaying and allow user input
+                simon_ShowingSequence = false;
+                simon_RqrdSqnceStppr = 0;
+                Serial.println(5);
+            break;
+        }
+    }
+
 
     //WHEN DONE
-    simon_PlayingLoseAnimation = false;
-    simon_ShowingScore = true;
+    if(!simon_ShowingSequence)
+    {
+        simon_PlayingLoseAnimation = false;
+        simon_ShowingScore = true;
+    }
 }
 
 
@@ -427,16 +477,17 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
 
     if(simon_PlayingGame)
     {
-        //click conditions
-        if (!simon_ShowingSequence && canClick) // only set to false while AI is showing sequence
-        {
-            simon_CheckPlayerInput(in);
-        }
-
         //animate simon_Sequence
         if(simon_ShowingSequence)
         {
             simon_ShowSequence();
+        }
+
+
+        //click conditions
+        if (!simon_ShowingSequence && canClick) // only set to false while AI is showing sequence
+        {
+            simon_CheckPlayerInput(in);
         }
 
         if(simon_NextRound)
@@ -464,6 +515,10 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
         if(simon_PlayingLoseAnimation)
         {
             simon_PlayLoseAnimation();
+
+            //check if told to blink and display those updated statuses
+            simon_UpdateBlinkStatus();
+            simon_DisplayBlinks(Screen);
         }else if(simon_ShowingScore)
         {
             simon_ShowScore();
