@@ -139,6 +139,7 @@ void simon_ShowSequence()
 
             case 5: //when it reaches the tail, stop displaying and allow user input
                 simon_ShowingSequence = false;
+                simon_RqrdSqnceStppr = 0;
             break;
         }
     }
@@ -351,6 +352,7 @@ void Game_SimonSays_Init(Screen_Alt Screen)
 
   simon_PlyrSqnce = "5";
   simon_RqrdSqnce = "5"; //5 is the tail
+
   String simon_SqnceAddition = String(int(random(1, 5)));
   simon_RqrdSqnce += simon_SqnceAddition;
 
@@ -394,6 +396,22 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
         if(simon_ShowingSequence)
         {
             simon_ShowSequence();
+        }
+
+        if(simon_NextRound)
+        {
+            simon_NextRound = false;
+
+            simon_PlyrSqnce = "5";
+
+            //Ugly Code Incoming. Previously laid foundation forces me to either do this or rewrite most of the structure of this game. Maybe in the future.
+            char simon_SqnceAddition = char(int(random(1, 5)) + 48); // +48 to convert from ascii value to ascii char
+            simon_RqrdSqnce.setCharAt(0, simon_SqnceAddition);
+            simon_RqrdSqnce = "5" + simon_RqrdSqnce;
+            Serial.println(simon_RqrdSqnce);
+
+            simon_ShowingSequence = true;
+            simon_millis_blinkNextInSqncePrev = millis();
         }
 
         //check if told to blink and display those updated statuses
