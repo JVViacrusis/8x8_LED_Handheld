@@ -1,6 +1,37 @@
 //DONT NEED THIS BUT IT STOPS ERRORS
 #include "Screen_Alt.h"
 
+
+
+////////////////////////////////////////////
+//             FUNCTION DEFS              //
+//                 START                  //
+////////////////////////////////////////////
+
+
+
+
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+
+
+
+
+////////////////////////////////////////////
+//             FUNCTION DEFS              //
+//                  END                   //
+////////////////////////////////////////////
+
+
+// boolean 
+
+
+
+
 void Game_DoodleJump_Init(Screen_Alt Screen)
 {
     for(int i = 0; i < 6; i++)
@@ -8,20 +39,8 @@ void Game_DoodleJump_Init(Screen_Alt Screen)
         firstClick[i] = 1;
     }
 
-    byte newScreen[8] = 
-    {
-        B00000000,
-        B00000000,
-        B00000000,
-        B00000000,
-        B00001111,
-        B00001001,
-        B00001001,
-        B00001111,
-    };
-    Screen.EditFullScreen(newScreen);
+    Screen.AllPixelsOff();
 }
-
 
 void Game_DoodleJump_Periodic(Screen_Alt Screen, bool in[6])
 {

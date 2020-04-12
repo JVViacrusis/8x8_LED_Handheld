@@ -35,7 +35,7 @@ boolean simon_isWaiting;
 long simon_millis_waitPrev;
 int simon_millis_waitInterval = 4000;
 
-boolean canClick = true;
+boolean simon_canClick = true;
 
 
 ////////////////////////////////////////////
@@ -90,6 +90,13 @@ void simon_GameStart()
   simon_millis_blinkNextInSqncePrev = millis();
   simon_millis_loseSequenceInterval = 0;
 }
+
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
 
 void simon_CheckPlayerInput(bool in[6])
 {
@@ -212,12 +219,12 @@ void simon_ShowSequence()
 
 void simon_UpdateBlinkStatus()
 {
-    canClick = true;
+    simon_canClick = true;
     //top 
     if(millis() - topQuad.curMillis < simon_QuadBlinkLength)
     {
         topQuad.isOn = true;
-        canClick = false;
+        simon_canClick = false;
     }else
     {
         topQuad.isOn = false;   
@@ -227,7 +234,7 @@ void simon_UpdateBlinkStatus()
     if(millis() - bottomQuad.curMillis < simon_QuadBlinkLength)
     {
         bottomQuad.isOn = true;
-        canClick = false;
+        simon_canClick = false;
     }else
     {
         bottomQuad.isOn = false;
@@ -237,7 +244,7 @@ void simon_UpdateBlinkStatus()
     if(millis() - leftQuad.curMillis < simon_QuadBlinkLength)
     {
         leftQuad.isOn = true;
-        canClick = false;
+        simon_canClick = false;
     }else
     {
         leftQuad.isOn = false;
@@ -247,7 +254,7 @@ void simon_UpdateBlinkStatus()
     if(millis() - rightQuad.curMillis < simon_QuadBlinkLength)
     {
         rightQuad.isOn = true;
-        canClick = false;
+        simon_canClick = false;
     }else
     {
         rightQuad.isOn = false;
@@ -333,7 +340,11 @@ void simon_CompareSequeneces()
         simon_PlayingGame = false;
         simon_Lose = true;
         simon_PlayingLoseAnimation = true;
-        simon_FinalScore = simon_RqrdSqnce.length() - 2;
+        simon_FinalScore = simon_RqrdSqnce.length() - 1;
+        if(simon_FinalScore < 2) // if the player doesnt score anything, show a pixel anyway or else they might think the game broke.
+        {
+            simon_FinalScore = 2;
+        }
         // Serial.println(nextRqrdChar);
 
         //for lose animation
@@ -546,7 +557,7 @@ void Game_SimonSays_Periodic(Screen_Alt Screen, bool in[6])
 
 
         //click conditions
-        if (!simon_ShowingSequence && canClick) // only set to false while AI is showing sequence
+        if (!simon_ShowingSequence && simon_canClick) // only set to false while AI is showing sequence
         {
             simon_CheckPlayerInput(in);
         }
