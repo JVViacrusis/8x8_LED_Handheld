@@ -51,6 +51,7 @@ class DJ_Platform   //Hitbox starting point is the left pixel
         int GetX(); //Get's current X position
         int GetY(); //Get's current Y position
         
+        void SimCamUp();  // Simulates the camera going up by moving the platform down
 
     private:
         int cur_x;
@@ -103,6 +104,12 @@ int DJ_Platform::GetY()
 {
     return cur_y;
 }
+
+
+void DJ_Platform::SimCamUp()
+{
+    cur_y++;
+}
 ////////////////////////////////////////////
 //             PLATFORM CLASS             //
 //                  END                   //
@@ -126,6 +133,9 @@ class DJ_Player // Hitbox starting point is the bottom pixel
         void UpdateVelocities(bool in[6]);    // Applies gravity and player inputs
         void Move();  //  Applies velocities to position
 
+        int GetY();    // Get current Y position
+
+        void SimCamUp(); // Simulate camera going up by moving player down
         
     private:
         int cur_x;
@@ -216,6 +226,18 @@ void DJ_Player::Move()
     cur_y += (0 < vel_y) - (vel_y < 0);   //only move up by one pixel but keep the momentum
     // cur_y += vel_y;
 }
+
+
+int DJ_Player::GetY()
+{
+    return cur_y;
+}
+
+
+void DJ_Player::SimCamUp()
+{
+    cur_y++;
+}
 ////////////////////////////////////////////
 //              PLAYER CLASS              //
 //                  END                   //
@@ -297,12 +319,21 @@ void Game_DoodleJump_Periodic(Screen_Alt Screen, bool in[6])
 
 
 
-            //PlayerUpdates
+            //Player updates
             DJ_m_Player.Collide(DJ_Platforms);
             DJ_m_Player.UpdateVelocities(in);
             DJ_m_Player.Move();
 
 
+            //Check camera follow
+            if(DJ_m_Player.GetY() < 2)
+            {
+                for(int i = 0; i < sizeof(DJ_Platforms) / sizeof(DJ_Platforms[0]); i++)
+                {
+                    DJ_Platforms[i].SimCamUp();
+                }   
+                DJ_m_Player.SimCamUp();
+            }
 
             //Renders
             for(int i = 0; i < sizeof(DJ_Platforms) / sizeof(DJ_Platforms[0]); i++)
