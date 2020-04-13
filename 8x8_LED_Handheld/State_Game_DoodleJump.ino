@@ -101,12 +101,15 @@ class DJ_Platform
     public:
         DJ_Platform();
 
-        void Init(int init_x, int init_y); //initialize pos
+        void Init(int init_x, int init_y); // Initialize pos
+        void DrawOnScreen(Screen_Alt Screen);   // Draws on screen
 
         void CheckBounds(); //Checks if it is out of a specified bounds. If it is, re-initialize to the top of the game screen
     
         int GetX(); //Get's current X position
         int GetY(); //Get's current Y position
+
+        
 
     private:
         int cur_x;
@@ -114,6 +117,51 @@ class DJ_Platform
 
         int draw_Points[2][2];
 };
+
+DJ_Platform::DJ_Platform(){}
+void DJ_Platform::DrawOnScreen(Screen_Alt Screen)
+{
+    //draw the current
+    for(int i = 0; i < sizeof(draw_Points) / sizeof(draw_Points[0]); i++)
+    {
+        //If within the bounds of the screen
+        if(cur_x + draw_Points[i][0] >= 0 && cur_x + draw_Points[i][0] <= 7 && cur_y + draw_Points[i][1] >= 0 && cur_y + draw_Points[i][1] <= 7)
+        {
+            Screen.EditPixel(cur_x + draw_Points[i][0], cur_y + draw_Points[i][1], 1);
+        }    
+    }
+}
+
+void DJ_Platform::Init(int init_x, int init_y)
+{
+    cur_x = init_x;
+    cur_y = init_y;
+
+
+    draw_Points[0][0] = 0;
+    draw_Points[0][1] = 0;
+
+    draw_Points[1][0] = 1;
+    draw_Points[1][1] = 0;
+}
+
+void DJ_Platform::CheckBounds()
+{
+    if(cur_y > 7)
+    {
+        Init(int(random(6), 0), 0);
+    }
+}
+
+int DJ_Platform::GetX()
+{
+    return cur_x;
+}
+
+int DJ_Platform::GetY()
+{
+    return cur_y;
+}
 ////////////////////////////////////////////
 //              PLAYER CLASS              //
 //                  END                   //
@@ -124,7 +172,7 @@ class DJ_Platform
 long DJ_Millis_GameTick_Prev;
 int DJ_Millis_GameTick_Interval = 100;
 
-
+DJ_Platform Platforms[2];
 
 void Game_DoodleJump_Init(Screen_Alt Screen)
 {
@@ -135,6 +183,9 @@ void Game_DoodleJump_Init(Screen_Alt Screen)
     Screen.AllPixelsOff();
 
     DJ_Millis_GameTick_Prev = millis();
+
+    Platforms[0].Init(3, 6);
+    Platforms[1].Init(6, 3);
 }
 
 void Game_DoodleJump_Periodic(Screen_Alt Screen, bool in[6])
@@ -142,8 +193,15 @@ void Game_DoodleJump_Periodic(Screen_Alt Screen, bool in[6])
     if(millis() - DJ_Millis_GameTick_Prev > DJ_Millis_GameTick_Interval)
     {
         DJ_Millis_GameTick_Prev = millis();
+        Screen.AllPixelsOff();
 
 
+
+
+        for(int i = 0; i < sizeof(Platforms) / sizeof(Platforms[0]); i++)
+        {
+            Platforms[i].DrawOnScreen(Screen);
+        }
     }
 }
 
