@@ -24,9 +24,9 @@ bool First_Cycle = true;
 
 int MillisTimer_ScreenRefresh_Previous = 0;
 //chang brightness (also change Screen_Alt.cpp__Screen_Alt::RefreshSreen__delayMicroseconds)
-  int MillisTimer_ScreenRefresh_Interval = 5;  // most bright 
+//   int MillisTimer_ScreenRefresh_Interval = 5;  // most bright 
 //  int MillisTimer_ScreenRefresh_Interval = 12;
-//  int MillisTimer_ScreenRefresh_Interval = 20; // least bright 
+ int MillisTimer_ScreenRefresh_Interval = 20; // least bright 
 
 bool      input[6] = {0, 0, 0, 0, 0, 0};
 bool firstClick[6] = {1, 1, 1, 1, 1, 1};

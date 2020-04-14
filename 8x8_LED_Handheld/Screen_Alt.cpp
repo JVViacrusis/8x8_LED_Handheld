@@ -61,9 +61,9 @@ void Screen_Alt::RefreshScreen()
         digitalWrite(ROW_PINS[i], LOW);   // Current row is powered
         //change brightness (also change 4x4Shift_Console.MillisTimer_ScreenRefresh_Interval) (Higher Number, Higher Brightness)
             // delayMicroseconds(600); //most bright
-            delayMicroseconds(200);
+            // delayMicroseconds(200);
             // delayMicroseconds(10);
-//          // delayMicroseconds(1); //least bright
+        delayMicroseconds(1); //least bright
         digitalWrite(ROW_PINS[i], HIGH);  // current row is unpowered
     }
 }
