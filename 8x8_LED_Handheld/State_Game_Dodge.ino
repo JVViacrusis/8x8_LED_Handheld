@@ -152,45 +152,91 @@ void Dodger::DrawOnScreen(Screen_Alt Screen)
 
 
 
-Enemy Enemies[2];
+
+////////////////////////////////////////////
+//             VARIABLE DEFS              //
+//                 START                  //
+////////////////////////////////////////////
+
+long Dodge_Millis_GameTick_Prev;
+int Dodge_Millis_GameTick_Interval = 65;
+
+Enemy Enemies[3];
 Dodger Dodge_Player;
 
-long long int miliTim_EneMoveD_Prev;
-long long int miliTim_EneMoveD_Interval = 500;
+long Dodge_Millis_ShowScore_Prev;
+int Dodge_Millis_ShowScore_Interval;
 
-void Game_Dodge_Init(Screen_Alt Screen)
+bool Dodge_PlayingGame;
+bool Dodge_LostGame;
+bool Dodge_ShowingScore;
+
+int Dodge_FinalScore;
+int Dodge_ScoreStppr;
+
+bool Dodge_IsWaiting;
+long Dodge_Millis_Wait_Prev;
+int Dodge_Millis_Wait_Interval = 4000;
+
+////////////////////////////////////////////
+//             VARIABLE DEFS              //
+//                 END                    //
+////////////////////////////////////////////
+
+
+
+
+////////////////////////////////////////////
+//             FUNCTION DEFS              //
+//                 START                  //
+////////////////////////////////////////////
+void Dodge_GameStart()
 {
-    for(int i = 0; i < 6; i++)
-    {
-        firstClick[i] = 1;
-    }
+    Dodge_Millis_GameTick_Prev = millis();
     
-    Screen.AllPixelsOff();
+    Dodge_Millis_ShowScore_Prev = millis();
+    Dodge_Millis_ShowScore_Interval = 0;
+
+    Dodge_PlayingGame = true;
+    Dodge_LostGame = false;
+    Dodge_ShowingScore = false;
+
+    Dodge_FinalScore = 1;
+    Dodge_ScoreStppr = 1;
+
+    Dodge_IsWaiting = false;
+    Dodge_Millis_Wait_Prev = millis();
+    Dodge_Millis_Wait_Interval = 4000;
 
     Enemies[0].Init(4, 4);
     Enemies[1].Init(6, 4);
 
     Dodge_Player.Init(4, 7);
+}
+////////////////////////////////////////////
+//             FUNCTION DEFS              //
+//                  END                   //
+////////////////////////////////////////////
 
-    miliTim_EneMoveD_Prev = millis();
+void Game_Dodge_Init(Screen_Alt Screen)
+{
+    randomSeed(analogRead(A6));
+    for(int i = 0; i < 6; i++)
+    {
+        firstClick[i] = 1;
+    }
+    Screen.AllPixelsOff();
+
+    Dodge_GameStart();
 }
 
 
 void Game_Dodge_Periodic(Screen_Alt Screen, bool in[6])
 {
-    if((millis() - miliTim_EneMoveD_Prev) > miliTim_EneMoveD_Interval)
-    {
-        miliTim_EneMoveD_Prev = millis();
-        Enemies[0].Move(0, 1);
-    }
-
-    
-    Enemies[0].DrawOnScreen(Screen);
-    Enemies[1].DrawOnScreen(Screen);
-
-    Screen_Alt DodgePlayer_Screen;
-    Dodge_Player.DrawOnScreen(Screen);
+   
 }
+
+
 
 
 enum State Game_Dodge_SwitchCheck(Screen_Alt Screen, bool in[6])
