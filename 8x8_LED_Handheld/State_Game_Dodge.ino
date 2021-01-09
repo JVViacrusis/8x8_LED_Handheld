@@ -161,7 +161,7 @@ void Dodger::DrawOnScreen(Screen_Alt Screen)
 long Dodge_Millis_GameTick_Prev;
 int Dodge_Millis_GameTick_Interval = 65;
 
-Enemy Enemies[3];
+Enemy Dodge_Enemies[3];
 Dodger Dodge_Player;
 
 long Dodge_Millis_ShowScore_Prev;
@@ -208,10 +208,53 @@ void Dodge_GameStart()
     Dodge_Millis_Wait_Prev = millis();
     Dodge_Millis_Wait_Interval = 4000;
 
-    Enemies[0].Init(4, 4);
-    Enemies[1].Init(6, 4);
+    Dodge_Enemies[0].Init(4, 4);
+    Dodge_Enemies[1].Init(6, 4);
 
     Dodge_Player.Init(4, 7);
+}
+
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+
+void Dodge_ShowScore(Screen_Alt Screen)
+{
+    Dodge_FinalScore = 45;
+//if interval
+        //reset interval
+        //update interval time to correspond with score. (interval = 1000 - 100 * score with minimum of 100)
+        //turn_pixel_on(scoreStppr);
+        //ScoreStppr++;
+        //if scoreStppr > finalScore
+            //simon_ShowingScore = false;
+
+    if(millis() - Dodge_Millis_ShowScore_Prev > Dodge_Millis_ShowScore_Interval)
+    {
+        if(!Dodge_IsWaiting)
+        {
+            Dodge_Millis_ShowScore_Prev = millis();
+            Dodge_Millis_ShowScore_Interval = 500 - (50 * (Dodge_FinalScore - Dodge_ScoreStppr));
+            Dodge_Millis_ShowScore_Interval = Dodge_Millis_ShowScore_Interval > 60 ? Dodge_Millis_ShowScore_Interval : 60;
+
+            int x = (Dodge_ScoreStppr - 1) % 8;
+            int y = ((Dodge_ScoreStppr - 1) / 8) % 8;
+            Screen.EditPixel(x, y, 1);
+
+            Dodge_ScoreStppr++;
+        }
+
+        if(Dodge_ScoreStppr == Dodge_FinalScore && !Dodge_IsWaiting)
+        {
+            //start witing for a short time
+            Dodge_IsWaiting = true;
+        }else if(Dodge_IsWaiting && millis() - Dodge_Millis_Wait_Prev > Dodge_Millis_Wait_Interval)
+        {
+            Dodge_ShowingScore = false;
+        }
+    }
+    
 }
 ////////////////////////////////////////////
 //             FUNCTION DEFS              //
@@ -233,7 +276,25 @@ void Game_Dodge_Init(Screen_Alt Screen)
 
 void Game_Dodge_Periodic(Screen_Alt Screen, bool in[6])
 {
-   
+   if(Dodge_PlayingGame)
+   {
+     if(millis() - Dodge_Millis_GameTick_Prev > Dodge_Millis_GameTick_Interval)
+     {
+        Dodge_LostGame = true;
+        Dodge_ShowingScore = Dodge_LostGame;
+        Dodge_PlayingGame = !Dodge_LostGame;
+     }
+   }else if(Dodge_LostGame)
+    {
+        if(Dodge_ShowingScore)
+        {
+            Dodge_ShowScore(Screen);
+        }
+        else
+        {
+            Dodge_GameStart();
+        }
+    }
 }
 
 
