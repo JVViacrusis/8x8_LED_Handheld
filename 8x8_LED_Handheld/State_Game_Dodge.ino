@@ -160,11 +160,16 @@ void Dodger::UpdateVelocities(bool in[6])
     vel_x = 0;
     vel_x -= in[2];
     vel_x += in[3];
+
+    vel_y = 0;
+    vel_y -= in[0];
+    vel_y += in[1];
 }
 
 void Dodger::Move()
 {
     cur_x += vel_x;
+    cur_y += vel_y;
 }
 ////////////////////////////////////////////
 //              DODGER CLASS              //
