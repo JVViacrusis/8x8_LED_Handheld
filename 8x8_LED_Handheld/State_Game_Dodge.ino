@@ -97,12 +97,18 @@ class Dodger
 
         void DrawOnScreen(Screen_Alt Screen);
 
-    private:
-        int cur_X;  
-        int cur_Y;
+        void UpdateVelocities(bool in[6]);
+        void Move();
 
-        int prev_X;
-        int prev_Y;
+    private:
+        int cur_x;  
+        int cur_y;
+
+        int prev_x;
+        int prev_y;
+
+        int vel_x;
+        int vel_y;
 
         
 
@@ -126,11 +132,14 @@ Dodger::Dodger(){}
 
 void Dodger::Init(int init_x, int init_y)
 {
-    cur_X = init_x;
-    cur_Y = init_y;
+    cur_x = init_x;
+    cur_y = init_y;
 
-    prev_X = init_x;
-    prev_Y = init_y;
+    prev_x = init_x;
+    prev_y = init_y;
+
+    vel_x = 0;
+    vel_y = 0;
 
     draw_Points[0][0] = 0;
     draw_Points[0][1] = 0;
@@ -139,9 +148,23 @@ void Dodger::Init(int init_x, int init_y)
 
 void Dodger::DrawOnScreen(Screen_Alt Screen)
 {
-    Screen.EditPixel(prev_X + draw_Points[0][0], prev_Y + draw_Points[0][1], 0);
+    Screen.EditPixel(prev_x + draw_Points[0][0], prev_y + draw_Points[0][1], 0);
 
-    Screen.EditPixel(cur_X + draw_Points[0][0], cur_Y + draw_Points[0][1], 1);                     
+    Screen.EditPixel(cur_x + draw_Points[0][0], cur_y + draw_Points[0][1], 1);                     
+}
+
+
+void Dodger::UpdateVelocities(bool in[6])
+{
+    //Player Input
+    vel_x = 0;
+    vel_x -= in[2];
+    vel_x += in[3];
+}
+
+void Dodger::Move()
+{
+    cur_x += vel_x;
 }
 ////////////////////////////////////////////
 //              DODGER CLASS              //
@@ -208,8 +231,9 @@ void Dodge_GameStart()
     Dodge_Millis_Wait_Prev = millis();
     Dodge_Millis_Wait_Interval = 4000;
 
-    Dodge_Enemies[0].Init(4, 4);
-    Dodge_Enemies[1].Init(6, 4);
+    Dodge_Enemies[0].Init(0, 0);
+    Dodge_Enemies[1].Init(6, 0);
+    Dodge_Enemies[2].Init(3, 3);
 
     Dodge_Player.Init(4, 7);
 }
@@ -221,14 +245,8 @@ void Dodge_GameStart()
 
 void Dodge_ShowScore(Screen_Alt Screen)
 {
+    //line for debugging remove when you want to display real score
     Dodge_FinalScore = 45;
-//if interval
-        //reset interval
-        //update interval time to correspond with score. (interval = 1000 - 100 * score with minimum of 100)
-        //turn_pixel_on(scoreStppr);
-        //ScoreStppr++;
-        //if scoreStppr > finalScore
-            //simon_ShowingScore = false;
 
     if(millis() - Dodge_Millis_ShowScore_Prev > Dodge_Millis_ShowScore_Interval)
     {
@@ -249,6 +267,7 @@ void Dodge_ShowScore(Screen_Alt Screen)
         {
             //start witing for a short time
             Dodge_IsWaiting = true;
+            Dodge_Millis_Wait_Prev = millis();
         }else if(Dodge_IsWaiting && millis() - Dodge_Millis_Wait_Prev > Dodge_Millis_Wait_Interval)
         {
             Dodge_ShowingScore = false;
@@ -261,6 +280,8 @@ void Dodge_ShowScore(Screen_Alt Screen)
 //                  END                   //
 ////////////////////////////////////////////
 
+
+///////////////////INIT/////////////////////
 void Game_Dodge_Init(Screen_Alt Screen)
 {
     randomSeed(analogRead(A6));
@@ -274,15 +295,34 @@ void Game_Dodge_Init(Screen_Alt Screen)
 }
 
 
+/////////////////PERIODIC///////////////////
 void Game_Dodge_Periodic(Screen_Alt Screen, bool in[6])
 {
    if(Dodge_PlayingGame)
    {
      if(millis() - Dodge_Millis_GameTick_Prev > Dodge_Millis_GameTick_Interval)
      {
-        Dodge_LostGame = true;
+        Dodge_Millis_GameTick_Prev = millis();
+        Screen.AllPixelsOff();
+
+        
+        //player movement
+        Dodge_Player.UpdateVelocities(in);
+        Dodge_Player.Move();
+
+        //enemy movement
+
+        //check player<->enemy collisions for game loss conditons
+        Dodge_LostGame = false; //Dodge_LostGame = condition when lost;
         Dodge_ShowingScore = Dodge_LostGame;
         Dodge_PlayingGame = !Dodge_LostGame;
+
+        //renders
+        for(int i = 0; i < (sizeof(Dodge_Enemies) / sizeof(Dodge_Enemies[0])); i++)
+        {
+            Dodge_Enemies[i].DrawOnScreen(Screen);
+        }
+        Dodge_Player.DrawOnScreen(Screen);
      }
    }else if(Dodge_LostGame)
     {
@@ -298,8 +338,7 @@ void Game_Dodge_Periodic(Screen_Alt Screen, bool in[6])
 }
 
 
-
-
+//////////////STATE HANDLING////////////////
 enum State Game_Dodge_SwitchCheck(Screen_Alt Screen, bool in[6])
 {
     State ReturnState = GAME_DODGE;

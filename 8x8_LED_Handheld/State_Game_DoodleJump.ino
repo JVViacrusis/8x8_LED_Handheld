@@ -406,9 +406,13 @@ void Game_DoodleJump_Periodic(Screen_Alt Screen, bool in[6])
             DJ_m_Player.Collide(DJ_Platforms);
             DJ_m_Player.UpdateVelocities(in);
             DJ_m_Player.Move();
+
+            //Check player bounds for loss condition
             DJ_LostGame = DJ_m_Player.CheckOutBounds(Screen);
             DJ_ShowingScore = DJ_LostGame;
             DJ_PlayingGame = !DJ_LostGame;
+
+            
             if(DJ_PlayingGame)  //Dont do these things if the player has fallen out of bounds
             {
                 //Check camera follow
