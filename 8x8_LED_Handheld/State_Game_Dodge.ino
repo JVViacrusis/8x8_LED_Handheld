@@ -169,6 +169,24 @@ void Dodger::UpdateVelocities(bool in[6])
 void Dodger::Move()
 {
     cur_x += vel_x;
+
+    //horizontal screen wrap-around
+    if(cur_x > 7)
+    {
+        cur_x = 0;
+    }else if(cur_x < 0)
+    {
+        cur_x = 7;
+    }
+
+    if(vel_y < 0 && cur_y == 0) //if going up and at ceiling
+    {
+        vel_y = 0;  //dont move that way
+    }
+    if(vel_y > 0 && cur_y == 7) //if going down and at floor 
+    {
+        vel_y =0; // dont move that way
+    }
     cur_y += vel_y;
 }
 ////////////////////////////////////////////
