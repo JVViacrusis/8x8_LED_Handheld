@@ -16,6 +16,8 @@
 
                             void DrawOnScreen(Screen_Alt Screen);
 
+                            bool IsOutOfBounds();
+                            
                         private:
                             int cur_x;
                             int cur_y;
@@ -69,6 +71,11 @@
                             }    
                         }                    
                     };
+
+                    bool Enemy::IsOutOfBounds()
+                    {
+                        return cur_y >= 8;
+                    }
 ////////////////////////////////////////////
 //              ENEMY CLASS               //
 //                  END                   //
@@ -200,13 +207,13 @@ void Dodger::Move()
 ////////////////////////////////////////////
 
 long Dodge_Millis_GameTick_Prev;
-int Dodge_Millis_GameTick_Interval = 65;
+int Dodge_Millis_GameTick_Interval;
 
 Enemy Dodge_Enemies[3];
 Dodger Dodge_Player;
 
 long Dodge_Millis_EnemyMove_Prev;
-int Dodge_Millis_EnemyMove_Interval = 300;
+int Dodge_Millis_EnemyMove_Interval;
 
 long Dodge_Millis_ShowScore_Prev;
 int Dodge_Millis_ShowScore_Interval;
@@ -237,6 +244,7 @@ int Dodge_Millis_Wait_Interval = 4000;
 void Dodge_GameStart()
 {
     Dodge_Millis_GameTick_Prev = millis();
+    Dodge_Millis_GameTick_Interval = 50;
     
     Dodge_Millis_ShowScore_Prev = millis();
     Dodge_Millis_ShowScore_Interval = 0;
@@ -252,14 +260,14 @@ void Dodge_GameStart()
     Dodge_Millis_Wait_Prev = millis();
     Dodge_Millis_Wait_Interval = 4000;
 
-    Dodge_Enemies[0].Init(0, 0);
-    Dodge_Enemies[1].Init(6, 0);
-    Dodge_Enemies[2].Init(3, 3);
+    Dodge_Enemies[0].Init(6, 5);
+    Dodge_Enemies[1].Init(2, 1);
+    Dodge_Enemies[2].Init(5, -3);
 
-    Dodge_Player.Init(1, 7);
+    Dodge_Player.Init(3, 7);
 
     Dodge_Millis_EnemyMove_Prev = millis();
-    Dodge_Millis_EnemyMove_Interval = 300;
+    Dodge_Millis_EnemyMove_Interval = 200;
 }
 
 ////////////////////////////////////////////
@@ -342,6 +350,34 @@ void Game_Dodge_Periodic(Screen_Alt Screen, bool in[6])
             for(int i = 0; i < (sizeof(Dodge_Enemies) / sizeof(Dodge_Enemies[0])); i++)
             {
                 Dodge_Enemies[i].Move(0, 1);
+            }
+        }
+
+        //enemy out of bounds respawn check
+        for(int i = 0; i < (sizeof(Dodge_Enemies) / sizeof(Dodge_Enemies[0])); i++)
+        {
+            if(Dodge_Enemies[i].IsOutOfBounds())  //if out of bounds
+            {
+                Dodge_Enemies[i].Init(random(7), -4); //respawn enemy at top at random x pos
+
+                Dodge_FinalScore++;
+
+                if(Dodge_FinalScore % 15 == 0)  //every 15 points, speed up enemies by an amount depending on current score
+                {
+                   if(Dodge_FinalScore <= 60)
+                   {
+                     Dodge_Millis_EnemyMove_Interval -= 25;
+                   }
+                   else if(Dodge_FinalScore <= 280)
+                   {
+                     Dodge_Millis_EnemyMove_Interval -= 5;
+                   }else if(Dodge_FinalScore >= 281)
+                   {
+                     Dodge_Millis_EnemyMove_Interval -= 1;
+                   }
+                }
+                
+                Dodge_Millis_EnemyMove_Interval = constrain(Dodge_Millis_EnemyMove_Interval, 0, 9999);
             }
         }
         
