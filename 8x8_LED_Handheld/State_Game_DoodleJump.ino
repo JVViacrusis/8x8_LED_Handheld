@@ -336,7 +336,7 @@ void DJ_GameStart()
 
 void DJ_ShowScore(Screen_Alt Screen)
 {
-    DJ_FinalScore = 70;
+//    DJ_FinalScore = 70;
 //if interval
         //reset interval
         //update interval time to correspond with score. (interval = 1000 - 100 * score with minimum of 100)
