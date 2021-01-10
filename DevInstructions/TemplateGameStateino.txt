@@ -1,0 +1,163 @@
+#include "Screen_Alt.h"
+
+
+////////////////////////////////////////////
+//             VARIABLE DEFS              //
+//                 START                  //
+////////////////////////////////////////////
+long {NAME}_Millis_GameTick_Prev;
+int {NAME}_Millis_GameTick_Interval;
+
+long {NAME}_Millis_ShowScore_Prev;
+int {NAME}_Millis_ShowScore_Interval;
+
+bool {NAME}_PlayingGame;
+bool {NAME}_LostGame;
+bool {NAME}_ShowingScore;
+
+int {NAME}_FinalScore;
+int {NAME}_ScoreStppr
+
+bool {NAME}_IsWaiting;
+long {NAME}_Millis_Wait_Prev;
+int {NAME}_Millis_Wait_interval;
+////////////////////////////////////////////
+//             VARIABLE DEFS              //
+//                 END                    //
+////////////////////////////////////////////
+
+
+
+
+////////////////////////////////////////////
+//             FUNCTION DEFS              //
+//                 START                  //
+////////////////////////////////////////////
+void {NAME}_GameStart()
+{
+    {NAME}_Millis_GameTick_Prev = millis();
+    {NAME}_Millis_GameTick_Prev = 50;
+
+    {NAME}_Millis_ShowScore_Prev = millis();
+    {NAME}_Millis_ShowScore_Interval = 0;
+
+    {NAME}_PlayingGame = True;
+    {NAME}_LostGame = false;
+    {NAME}_ShowingScore = false;
+
+    {NAME}_FinalScore = 1;
+    {NAME}_ScoreStppr = 1;
+
+    {NAME}_IsWaiting = false;
+    {NAME}_Millis_Wait_Prev = millis();
+    {NAME}_Millis_Wait_Interval = 4000;
+}
+
+
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+void {NAME}_ShowScore(Screen_Alt Screen)
+{
+    //will display a pixel for every 5 points
+    int {NAME}_DisplayScore = {NAME}_FinalScore / 5;
+    
+    if(millis() - {NAME}_Millis_ShowScore_Prev > {NAME}_Millis_ShowScore_Interval)
+    {
+        if(!{NAME}_IsWaiting)
+        {
+            {NAME}_Millis_ShowScore_Prev = millis();
+            {NAME}_Millis_ShowScore_Interval = 500 - (50 * ({NAME}_DisplayScore - {NAME}_ScoreStppr));
+            {NAME}_Millis_ShowScore_Interval = {NAME}_Millis_ShowScore_Interval > 60 ? {NAME}_Millis_ShowScore_Interval : 60;
+
+            int x = ({NAME}_ScoreStppr - 1) % 8;
+            int y = (({NAME}_ScoreStppr - 1) / 8) % 8;
+            Screen.EditPixel(x, y, 1);
+
+            {NAME}_ScoreStppr++;
+        }
+
+        if({NAME}_ScoreStppr >= {NAME}_DisplayScore && !{NAME}_IsWaiting)
+        {
+            //start witing for a short time
+            {NAME}_IsWaiting = true;
+            {NAME}_Millis_Wait_Prev = millis();
+        }else if({NAME}_IsWaiting && millis() - {NAME}_Millis_Wait_Prev > {NAME}_Millis_Wait_Interval)
+        {
+            {NAME}_ShowingScore = false;
+        }
+    }
+    
+}
+////////////////////////////////////////////
+//             FUNCTION DEFS              //
+//                  END                   //
+////////////////////////////////////////////
+
+
+
+
+///////////////////INIT/////////////////////
+void Game_{NAME}_Init(Screen_Alt Screen)
+{
+    randomSeed(analogRead(A6));
+    for(int i = 0; i < 6; i++)
+    {
+        firstClick[i] = 1;
+    }
+    Screen.AllPixelsOff();
+
+    {NAME}_GameStart();
+}
+
+
+/////////////////PERIODIC///////////////////
+void Game_{NAME}_Periodic(Screen_Alt Screen)
+{
+    if({NAME}_PlayingGame)
+    {
+        if(millis() - {NAME}_Millis_GameTick_Prev > {NAME}_Millis_GameTick_Interval)
+        {
+            {NAME}_Millis_GameTick_Prev = millis();
+            Screen.AllPixelsOff();
+
+            //GAME CODE HERE
+
+
+            {NAME}_LostGame = false; //{NAME}_LostGame = true when game is lost
+            {NAME}_ShowingScore = Dodge_LostGame;
+            {NAME}_PlayingGame = !Dodge_LostGame;
+
+            //render (only render if playing game)
+            if({NAME}_PlayingGame)
+            {
+                //PUT RENDER CODE EHRE
+            }
+        }
+    }else if({NAME}_LostGame)
+    {
+        if({NAME}_ShowingScore)
+        {
+            {NAME}_ShowScore(Screen);
+        }
+        else
+        {
+            {NAME}_GameStart();
+        }
+    }
+}
+
+
+
+//////////////STATE HANDLING////////////////
+enum State Game_{NAME}_SwitchCheck(Screen_Alt Screen, bool in[6])
+{
+    State ReturnState = GAME_{NAME_CAPS};
+
+    if(in[3] && in[1] && in[4])
+    {
+        ReturnState = MENU;
+    }
+    return ReturnState;
+}
