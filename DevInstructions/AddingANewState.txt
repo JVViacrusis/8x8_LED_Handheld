@@ -1,0 +1,143 @@
+How To Add A New State:
+    1. Create a state file with ".ino" extension and make sure to follow naming convention
+        (
+            [State_Category_Name]
+
+            e.g. State_Game_Dodge.ino
+                        or
+                 State_Animation_Rain.ino
+        )
+
+    2. Include the Screen_Alt header file so the state knows how to use the screen.
+        (
+            #include "Screen_Alt.h"
+        )
+
+    3. Create any necessary classes and variables including the screen fix (run it in setup)
+        (
+            e.g.
+
+            class fix_[SN]
+            {
+                public:
+                    fix_[SN]();
+                    void fix(Screen_Alt Screen);
+            };
+            fix_[SN]::fix_rain(){}
+            void fix_[SN]]::fix(Screen_Alt Screen){}
+            fix_[SN] fix_[SN]_;
+
+            class Enemy
+            {
+                public:
+                    Enemy();
+
+                    void Init(int x, int y);
+                    void DrawOnScreen(Screen_Alt Screen);
+
+                private:
+                    int x_, y_;
+            }
+
+            Enemy::Enemy(){}
+
+            void Enemy::Init(int _x_, int _y_)
+            {
+                x_ = _x_;
+                y_ = _y_;
+
+                    //  draw_Points[point #][point_x, point_y]
+                    //  relative to home position (x, y)
+                int draw_Points[1][2];
+            }
+
+            void Enemy::DrawOnScreen(Screen_Alt Screen)
+            {
+                                
+                Screen.EditPixel(x_ + draw_Points[0][0], y_ + drawPoints[0][1], 1)
+
+                                //EditPixel(x, y, new_state_of_pixel)
+                                //you will have to make a draw and erase function somehow
+                                //either keep track of previous position and have a global render
+                                //that wipes that previous position.
+                                //or wipe every time it moves
+            }
+        )
+    
+    4. Make an init and periodic function for the state
+       Make sure to use [State_Name]_Init, and [State_Name]_Periodic naming convention
+       Make sure to include a screen and input reference passer
+       -->all the states share a screen and need to pass it on because arduino doesnt
+        support the necessary stuff to do it without this<!--
+       (
+            e.g. Game_Dodge_Init(Screen_Alt Screen), Game_Dodge_Periodic(Screen_Alt Screen, bool in[6])
+       )
+
+    5. Make a switch check function
+       This function will pass a different state to go to if certain requirements are fulfilled
+       (
+            e.g. 
+            enum State Game_Dodge_SwitchCheck(Screen_Alt Screen, bool in[6])
+            {
+                State ReturnState = GAME_DODGE;
+
+                //check if a certain input combintion is fulfilled. if so, go to menu.
+                if(in[3] && in[1] && in[4])
+                {
+                    ReturnState = MENU;
+                }
+
+                return ReturnState;
+            }
+       )
+
+    6. Add your new state to the main .ino
+
+        i.  Add state name to enum State{};.
+            Use the convention:
+            [STATE_NAME],
+            
+
+        ii. Add a case for your state in the switch statement.
+            Use the convention:
+
+                case [STATE_NAME]:
+                    if(First_Cycle)
+                    {
+                        First_Cycle = false;
+                        [State_Name]_Init(m_Screen);
+                    }
+                    
+                    if(!First_Cycle)
+                    {
+                        m_IOControl.GetButtonStates(input);
+                        [State_Name]_Periodic(m_Screen, input);
+                    }
+
+                    m_IOControl.GetButtonStates(input);
+                    Current_State = [State_Name]_SwitchCheck(m_Screen, input);
+                    if(Current_State != Previous_State) //State has changed
+                    {
+                        Previous_State = Current_State;
+                        First_Cycle = true;
+                    }
+                break;
+
+
+    7. Add your new state to the menu
+
+        i. Increase the Game_Selection_MaxNum by one.
+
+        ii. Add a menu graphic to the elseif branch.
+
+            else if(SelectionCurrent == [State Number])  // [State Name]
+                {
+                    displayImage[0] = B00011000;
+                    displayImage[1] = B00111100;
+                    displayImage[2] = B01100110;
+                    displayImage[3] = B01100110;
+                    displayImage[4] = B00111100;
+                    displayImage[5] = B00011000;
+                    displayImage[6] = B11111111;
+                    displayImage[7] = B00100000;
+                }
