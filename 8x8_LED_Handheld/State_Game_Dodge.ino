@@ -17,11 +17,8 @@
                             void DrawOnScreen(Screen_Alt Screen);
 
                         private:
-                            int cur_X;
-                            int cur_Y;
-
-                            int prev_X;
-                            int prev_Y;
+                            int cur_x;
+                            int cur_y;
 
                             //  draw_Points[point #][point_x, point_y]
                             //  relative to home position (x, y)
@@ -39,11 +36,8 @@
                         // init_X = init_x;
                         // init_Y = init_y;
 
-                        cur_X = init_x;
-                        cur_Y = init_y;
-
-                        prev_X = init_x;
-                        prev_Y = init_y;
+                        cur_x = init_x;
+                        cur_y = init_y;
 
                         draw_Points[0][0] = 0;
                         draw_Points[0][1] = 0;
@@ -54,11 +48,8 @@
 
                     void Enemy::Move(int x_Move, int y_Move)
                     {
-                        prev_X = cur_X;
-                        prev_Y = cur_Y;
-
-                        cur_X += x_Move;
-                        cur_Y += y_Move;
+                        cur_x += x_Move;
+                        cur_y += y_Move;
 
                         // if(cur_Y > 7)
                         // {
@@ -68,11 +59,15 @@
 
                     void Enemy::DrawOnScreen(Screen_Alt Screen)
                     {
-                        Screen.EditPixel(prev_X + draw_Points[0][0], prev_Y + draw_Points[0][1], 0);
-                        Screen.EditPixel(prev_X + draw_Points[1][0], prev_Y + draw_Points[1][1], 0);
-
-                        Screen.EditPixel(cur_X + draw_Points[0][0], cur_Y + draw_Points[0][1], 1);
-                        Screen.EditPixel(cur_X + draw_Points[1][0], cur_Y + draw_Points[1][1], 1);                        
+                        //draw the current
+                        for(int i = 0; i < sizeof(draw_Points) / sizeof(draw_Points[0]); i++)
+                        {
+                            //If within the bounds of the screen
+                            if(cur_x + draw_Points[i][0] >= 0 && cur_x + draw_Points[i][0] <= 7 && cur_y + draw_Points[i][1] >= 0 && cur_y + draw_Points[i][1] <= 7)
+                            {
+                                Screen.EditPixel(cur_x + draw_Points[i][0], cur_y + draw_Points[i][1], 1);
+                            }    
+                        }                    
                     };
 ////////////////////////////////////////////
 //              ENEMY CLASS               //
@@ -104,9 +99,6 @@ class Dodger
         int cur_x;  
         int cur_y;
 
-        int prev_x;
-        int prev_y;
-
         int vel_x;
         int vel_y;
 
@@ -135,9 +127,6 @@ void Dodger::Init(int init_x, int init_y)
     cur_x = init_x;
     cur_y = init_y;
 
-    prev_x = init_x;
-    prev_y = init_y;
-
     vel_x = 0;
     vel_y = 0;
 
@@ -148,9 +137,15 @@ void Dodger::Init(int init_x, int init_y)
 
 void Dodger::DrawOnScreen(Screen_Alt Screen)
 {
-    Screen.EditPixel(prev_x + draw_Points[0][0], prev_y + draw_Points[0][1], 0);
-
-    Screen.EditPixel(cur_x + draw_Points[0][0], cur_y + draw_Points[0][1], 1);                     
+    //draw the current
+    for(int i = 0; i < sizeof(draw_Points) / sizeof(draw_Points[0]); i++)
+    {
+        //If within the bounds of the screen
+        if(cur_x + draw_Points[i][0] >= 0 && cur_x + draw_Points[i][0] <= 7 && cur_y + draw_Points[i][1] >= 0 && cur_y + draw_Points[i][1] <= 7)
+        {
+            Screen.EditPixel(cur_x + draw_Points[i][0], cur_y + draw_Points[i][1], 1);
+        }    
+    }                
 }
 
 
@@ -210,6 +205,9 @@ int Dodge_Millis_GameTick_Interval = 65;
 Enemy Dodge_Enemies[3];
 Dodger Dodge_Player;
 
+long Dodge_Millis_EnemyMove_Prev;
+int Dodge_Millis_EnemyMove_Interval = 300;
+
 long Dodge_Millis_ShowScore_Prev;
 int Dodge_Millis_ShowScore_Interval;
 
@@ -258,7 +256,10 @@ void Dodge_GameStart()
     Dodge_Enemies[1].Init(6, 0);
     Dodge_Enemies[2].Init(3, 3);
 
-    Dodge_Player.Init(4, 7);
+    Dodge_Player.Init(1, 7);
+
+    Dodge_Millis_EnemyMove_Prev = millis();
+    Dodge_Millis_EnemyMove_Interval = 300;
 }
 
 ////////////////////////////////////////////
@@ -334,6 +335,16 @@ void Game_Dodge_Periodic(Screen_Alt Screen, bool in[6])
         Dodge_Player.Move();
 
         //enemy movement
+        if(millis() - Dodge_Millis_EnemyMove_Prev > Dodge_Millis_EnemyMove_Interval)
+        {
+            Dodge_Millis_EnemyMove_Prev = millis();
+
+            for(int i = 0; i < (sizeof(Dodge_Enemies) / sizeof(Dodge_Enemies[0])); i++)
+            {
+                Dodge_Enemies[i].Move(0, 1);
+            }
+        }
+        
 
         //check player<->enemy collisions for game loss conditons
         Dodge_LostGame = false; //Dodge_LostGame = condition when lost;
