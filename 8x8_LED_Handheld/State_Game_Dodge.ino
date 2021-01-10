@@ -17,18 +17,13 @@
                             void DrawOnScreen(Screen_Alt Screen);
 
                             bool IsOutOfBounds();
-                            
-                        private:
+
                             int cur_x;
                             int cur_y;
-
+                            
                             //  draw_Points[point #][point_x, point_y]
                             //  relative to home position (x, y)
                             int draw_Points[2][2];
-
-                            // long long testing[1];
-
-   
                     };
 
                     Enemy::Enemy(){}
@@ -101,6 +96,8 @@ class Dodger
 
         void UpdateVelocities(bool in[6]);
         void Move();
+
+        bool IsCollidingWith(Enemy enemy);
 
     private:
         int cur_x;  
@@ -191,6 +188,19 @@ void Dodger::Move()
     }
     cur_y += vel_y;
 }
+
+bool Dodger::IsCollidingWith(Enemy enemy)
+{
+    for(int i = 0; i < sizeof(enemy.draw_Points) / sizeof(enemy.draw_Points[0]); i++) //for each box that the enemy occupies
+    {
+        if(cur_x == enemy.cur_x + enemy.draw_Points[i][0] && cur_y == enemy.cur_y + enemy.draw_Points[i][1]) //check if the player xy match up with the enemy xy
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 ////////////////////////////////////////////
 //              DODGER CLASS              //
 //                  END                   //
@@ -277,15 +287,15 @@ void Dodge_GameStart()
 
 void Dodge_ShowScore(Screen_Alt Screen)
 {
-    //line for debugging remove when you want to display real score
-    Dodge_FinalScore = 45;
-
+    //will display a pixel for every 5 points
+    int Dodge_DisplayScore = Dodge_FinalScore / 5;
+    
     if(millis() - Dodge_Millis_ShowScore_Prev > Dodge_Millis_ShowScore_Interval)
     {
         if(!Dodge_IsWaiting)
         {
             Dodge_Millis_ShowScore_Prev = millis();
-            Dodge_Millis_ShowScore_Interval = 500 - (50 * (Dodge_FinalScore - Dodge_ScoreStppr));
+            Dodge_Millis_ShowScore_Interval = 500 - (50 * (Dodge_DisplayScore - Dodge_ScoreStppr));
             Dodge_Millis_ShowScore_Interval = Dodge_Millis_ShowScore_Interval > 60 ? Dodge_Millis_ShowScore_Interval : 60;
 
             int x = (Dodge_ScoreStppr - 1) % 8;
@@ -295,7 +305,7 @@ void Dodge_ShowScore(Screen_Alt Screen)
             Dodge_ScoreStppr++;
         }
 
-        if(Dodge_ScoreStppr == Dodge_FinalScore && !Dodge_IsWaiting)
+        if(Dodge_ScoreStppr >= Dodge_DisplayScore && !Dodge_IsWaiting)
         {
             //start witing for a short time
             Dodge_IsWaiting = true;
@@ -383,16 +393,25 @@ void Game_Dodge_Periodic(Screen_Alt Screen, bool in[6])
         
 
         //check player<->enemy collisions for game loss conditons
-        Dodge_LostGame = false; //Dodge_LostGame = condition when lost;
+        for(int i = 0; i < (sizeof(Dodge_Enemies) / sizeof(Dodge_Enemies[0])); i++)
+        {
+            if(Dodge_Player.IsCollidingWith(Dodge_Enemies[i]))
+            {
+              Dodge_LostGame = true;  
+            }
+        }
         Dodge_ShowingScore = Dodge_LostGame;
         Dodge_PlayingGame = !Dodge_LostGame;
 
-        //renders
-        for(int i = 0; i < (sizeof(Dodge_Enemies) / sizeof(Dodge_Enemies[0])); i++)
+        //renders (only render if playing game)
+        if(Dodge_PlayingGame)
         {
-            Dodge_Enemies[i].DrawOnScreen(Screen);
+          for(int i = 0; i < (sizeof(Dodge_Enemies) / sizeof(Dodge_Enemies[0])); i++)
+          {
+              Dodge_Enemies[i].DrawOnScreen(Screen);
+          }
+          Dodge_Player.DrawOnScreen(Screen);
         }
-        Dodge_Player.DrawOnScreen(Screen);
      }
    }else if(Dodge_LostGame)
     {
