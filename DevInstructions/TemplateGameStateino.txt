@@ -16,11 +16,11 @@ bool {NAME}_LostGame;
 bool {NAME}_ShowingScore;
 
 int {NAME}_FinalScore;
-int {NAME}_ScoreStppr
+int {NAME}_ScoreStppr;
 
 bool {NAME}_IsWaiting;
 long {NAME}_Millis_Wait_Prev;
-int {NAME}_Millis_Wait_interval;
+int {NAME}_Millis_Wait_Interval;
 ////////////////////////////////////////////
 //             VARIABLE DEFS              //
 //                 END                    //
@@ -41,7 +41,7 @@ void {NAME}_GameStart()
     {NAME}_Millis_ShowScore_Prev = millis();
     {NAME}_Millis_ShowScore_Interval = 0;
 
-    {NAME}_PlayingGame = True;
+    {NAME}_PlayingGame = true;
     {NAME}_LostGame = false;
     {NAME}_ShowingScore = false;
 
@@ -113,7 +113,7 @@ void Game_{NAME}_Init(Screen_Alt Screen)
 
 
 /////////////////PERIODIC///////////////////
-void Game_{NAME}_Periodic(Screen_Alt Screen)
+void Game_{NAME}_Periodic(Screen_Alt Screen, bool in[6])
 {
     if({NAME}_PlayingGame)
     {
