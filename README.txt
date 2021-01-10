@@ -1,19 +1,53 @@
-This was a self-lead school project meant to explore the utility of shift registers when paired with Arduino. This was also an homage to my very first electronics project of a similar, but much more rudimentary design that was made 1.5 years prior 
+{image of console}
+8x8 LED Handheld Console
+A li-po battery powered handheld console with a green 8x8 LED screen, 4 direction buttons, and 2 command buttons.
+Made by Justin Viacrusis age 16 
+Made on April 2020
+
+Email: justin.viacrusis21p@gmail.com
+IG: Justin Viacrusis @via.justin_
+
+This handheld console was originally made as a school project but has continued to
+be developed and evolved. I plan on keeping this project with me for as long as 
+I can and develop some games every now and then. I have detailed schematics that 
+will eventually be scanned and put up on here but if you are interested in having
+them sooner, feel free to contact me through the means posted above and I can send you
+an early copy.
 
 
-TO DO:
-    - Experiment with a constantly refreshed screen. (currently only re-draws an object when a position-changing function is called)
+Coding and Electronics Concepts Used:
+	- Multiplexing with shift registers
+	- State Machines
+	- Objects
+
+Materials Used:
+	- 1x Arduino Nano
+	- 6x Buttons
+	- 64x LEDs of any single colour (green in mine)
+	- 1x 74HC595 Shift Register IC
+	- 1x power switch
+	- 8x 180 ohm resistor
+	- 12x 1000 ohm resistor
+	- 1x 3.7v li-po battery
+	- 1x 3.7v li-po battery charging circuit
+	- around 1m of 22AWG multi-core wiring
+	- Particle Board
+	- Cardboard
+	- hot glue
+	
+Current Games:
+    - Dodge {gif of dodge game}
+    - Dewdle Jump {gif of dewdle jump game}
+    - Simon Says {gif of simon says game}
+
+Current Animations:
+    - Raindrops {gif of raindrops animation}
 
 
-GAME IDEAS:
+Future Game Ideas:
     - wack-a-mole (reaction game)
     - tetris
     - snake
     - rock paper scissors somehow
+    - stacker
 
-
-Unusual Commit History Explanation
-- The Workaround branch was made because I had been having trouble uploading to the game console due to the parts being cheap knockoffs. Thankfully I found a workaround but it required me to use a different computer and the fastest way I found to implement this workaround was by creating a seperate branch and pushing every time I wanted to test something.
-- What did this mean? In order to attempt to hasten that bulky pipeline, I did not be including detailed commit messages, if any. It will also mean that most of my pushes will be non-functional and typically not meant to be seen in public.
-- In order to combat the previously stated problems with this system, I have attempted to highlight important pushes with !!!![title]!!!!. This will hopefully allow you to sieve through the commits and find the important ones.
-- Lastly, the problem has now been fixed and developement will now continue normally. 
