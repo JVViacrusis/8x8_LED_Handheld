@@ -3,7 +3,7 @@
 
 
 int Game_Selection_MinNum = 1;
-int Game_Selection_MaxNum = 4;
+int Game_Selection_MaxNum = 5;
 
 int SelectionCurrent = Game_Selection_MinNum + 1;
 bool SelectionConfirmed;
@@ -104,7 +104,18 @@ void Menu_Periodic(Screen_Alt Screen, bool in[6])
         displayImage[6] = B11111111;
         displayImage[7] = B00100000;
     }
-    else if(SelectionCurrent == 4) // Rain
+    else if(SelectionCurrent == 4)  // Stacker
+    {
+        displayImage[0] = B01000000;
+        displayImage[1] = B00001000;
+        displayImage[2] = B00001000;
+        displayImage[3] = B00011000;
+        displayImage[4] = B00011100;
+        displayImage[5] = B00011100;
+        displayImage[6] = B11111111;
+        displayImage[7] = B00010000;
+    }
+    else if(SelectionCurrent == 5) // Rain
     {
         displayImage[0] = B01000100;
         displayImage[1] = B10001001;
@@ -113,7 +124,7 @@ void Menu_Periodic(Screen_Alt Screen, bool in[6])
         displayImage[4] = B10001000;
         displayImage[5] = B00010001;
         displayImage[6] = B11111111;
-        displayImage[7] = B00010000;
+        displayImage[7] = B00001000;
     }
     
     Screen.EditFullScreen(displayImage);  

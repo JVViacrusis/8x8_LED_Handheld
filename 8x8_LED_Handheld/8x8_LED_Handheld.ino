@@ -10,6 +10,7 @@ enum State
     GAME_DODGE,
     GAME_DOODLEJUMP,
     GAME_SIMONSAYS,
+    GAME_STACKER,
     ANIMATION_RAIN
 };
 
@@ -126,6 +127,29 @@ void loop()
 
             m_IOControl.GetButtonStates(input);
             Current_State = Game_SimonSays_SwitchCheck(m_Screen, input);
+            if(Current_State != Previous_State) //State has changed
+            {
+                Previous_State = Current_State;
+                First_Cycle = true;
+            }
+        break;
+
+        case GAME_STACKER:
+            if(First_Cycle)
+            {
+                First_Cycle = false;
+                m_IOControl.GetButtonStates(input);
+                Game_Stacker_Init(m_Screen);
+            }
+                
+            if(!First_Cycle)
+            {
+                m_IOControl.GetButtonStates(input);
+                Game_Stacker_Periodic(m_Screen, input);
+            }
+
+            m_IOControl.GetButtonStates(input);
+            Current_State = Game_Stacker_SwitchCheck(m_Screen, input);
             if(Current_State != Previous_State) //State has changed
             {
                 Previous_State = Current_State;
